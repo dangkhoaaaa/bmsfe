@@ -1,0 +1,44 @@
+.coupon-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+
+.payment-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.payment-options {
+  margin: 20px 0;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.thumbnail {
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.payment-label {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.price-display {
+  margin: 20px 0;
+}
+
+.pay-button {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}

@@ -1,0 +1,167 @@
+.product-card {
+    background-color: #ffffff; // Màu nền trắng
+    border: 1px solid #e0e0e0; // Biên mỏng hơn
+    border-radius: 8px; // Bo tròn các góc nhiều hơn
+    padding: 20px; // Padding thoải mái hơn
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Đổ bóng nhẹ
+    transition: transform 0.3s, box-shadow 0.3s; // Hiệu ứng chuyển tiếp cho hover
+
+   
+
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px; // Bo tròn cho hình ảnh
+        margin-bottom: 15px; // Khoảng cách dưới nhiều hơn
+        border: 1px solid #f0f0f0; // Đường biên nhẹ cho hình ảnh
+    }
+
+    h3 {
+        font-size: 22px; // Tăng kích thước font tiêu đề
+        margin: 10px 0;
+        color: #333;
+        font-weight: bold; // Đậm hơn cho tiêu đề
+    }
+
+    p {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.5; // Tăng khoảng cách dòng
+    }
+
+    .card-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px; // Khoảng cách trên cho các nút
+
+        button {
+            padding: 10px 15px; // Padding cho nút
+            border: none;
+            border-radius: 5px; // Bo tròn cho nút
+            cursor: pointer;
+
+            &.edit-button {
+                background-color: #007bff; // Màu xanh cho nút chỉnh sửa
+                color: white;
+                transition: background-color 0.3s;
+
+                &:hover {
+                    background-color: #0056b3; // Tối màu khi hover
+                }
+            }
+
+            &.delete-button {
+                background-color: #dc3545; // Màu đỏ cho nút xóa
+                color: white;
+                transition: background-color 0.3s;
+
+                &:hover {
+                    background-color: #c82333; // Tối màu khi hover
+                }
+            }
+        }
+    }
+}
+
+// Popup styles for editing product details
+.edit-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    border-radius: 10px; // Bo tròn nhiều hơn cho popup
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2); // Tăng cường hiệu ứng đổ bóng
+    padding: 30px; // Padding thoải mái hơn
+    z-index: 1000;
+    width: 450px; // Nới rộng chiều rộng
+    border: 1px solid #e0e0e0; // Đường biên cho popup
+
+    h2 {
+        margin-top: 0;
+        color: #333;
+        font-size: 24px; // Tăng kích thước tiêu đề
+        font-weight: bold; // Đậm cho tiêu đề
+    }
+
+    .popup-form {
+        display: flex;
+        flex-direction: column;
+
+        .form-group {
+            margin-left: 10px;
+            margin-bottom: 20px; // Khoảng cách giữa các nhóm
+            position: relative; // Để dùng cho các label
+
+            label {
+                font-weight: bold;
+                margin-bottom: 5px;
+                color: #555;
+                position: absolute; // Đặt label bên trên input
+                left: 10px;
+                top: -10px;
+                background-color: white; // Nền trắng cho label
+                padding: 0 5px; // Padding cho label
+                transition: 0.3s; // Hiệu ứng chuyển tiếp
+                font-size: 14px; // Kích thước font cho label
+            }
+
+            input,
+            textarea {
+                width: 100%;
+                padding: 12px; // Padding thoải mái
+                border: 1px solid #ccc;
+                border-radius: 5px; // Bo tròn
+                transition: border-color 0.3s;
+
+                &:focus {
+                    border-color: #007bff; // Màu biên khi focus
+                    outline: none; // Không có viền khi focus
+                }
+
+                &::placeholder {
+                    color: #aaa;
+                }
+            }
+
+            textarea {
+                resize: vertical; // Cho phép thay đổi kích thước chiều dọc
+                min-height: 120px; // Chiều cao tối thiểu cho textarea
+            }
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+
+            .save-button {
+                background-color: #28a745; // Màu xanh cho nút lưu
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+
+                &:hover {
+                    background-color: #218838; // Tối màu khi hover
+                }
+            }
+
+            .cancel-button {
+                background-color: #dc3545; // Màu đỏ cho nút hủy
+                color: white;
+                padding: 12px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+
+                &:hover {
+                    background-color: #c82333; // Tối màu khi hover
+                }
+            }
+        }
+    }
+}

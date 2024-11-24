@@ -1,0 +1,30 @@
+.staff-page {
+  padding: 20px;
+}
+
+.staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .staff-actions {
+    display: flex;
+    align-items: center;
+
+    .search-bar {
+      margin-right: 20px;
+      width: 250px;
+    }
+  }
+}
+
+.staff-table-container {
+  margin-top: 20px;
+
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

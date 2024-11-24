@@ -1,0 +1,104 @@
+.add-product-page {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    .form-header {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .success-message {
+        color: green;
+        text-align: center;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .add-product-form {
+        display: flex;
+        flex-direction: column;
+
+        .form-group {
+            margin-bottom: 15px;
+            margin-right: 15px;
+
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            input,
+            textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+
+                &:focus {
+                    border-color: #007bff; /* Blue border on focus */
+                    outline: none; /* Remove default outline */
+                }
+
+                &:hover {
+                    border-color: #007bff; /* Blue border on hover */
+                }
+            }
+
+            textarea {
+                resize: vertical; /* Allow vertical resizing */
+                height: 100px; /* Set a default height */
+            }
+
+            .error {
+                color: red;
+                font-size: 14px;
+                margin-top: 5px;
+                transition: opacity 0.3s;
+                opacity: 1; /* Ensure error message is visible */
+            }
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+
+            .submit-button,
+            .cancel-button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+
+                &.submit-button {
+                    background-color: #007bff; /* Blue background */
+                    color: white;
+
+                    &:hover {
+                        background-color: #0056b3; /* Darker blue on hover */
+                    }
+                }
+
+                &.cancel-button {
+                    background-color: #dc3545; /* Red background */
+                    color: white;
+
+                    &:hover {
+                        background-color: #c82333; /* Darker red on hover */
+                    }
+                }
+            }
+        }
+    }
+}

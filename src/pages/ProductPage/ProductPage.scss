@@ -1,0 +1,169 @@
+.product-page {
+    padding: 20px;
+    background-color: #f9f9f9;
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .product-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .search-input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 300px;
+
+            &:focus {
+                border-color: #007bff;
+                outline: none;
+            }
+        }
+
+        .add-product-button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #218838;
+            }
+
+            .add-icon {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+
+            &:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            &:hover:not(:disabled) {
+                background-color: #0056b3;
+            }
+        }
+
+        span {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+    }
+
+    // Thêm phần CSS cho form Add Product
+    .add-product-page {
+        margin-top: 30px; // Tạo khoảng cách giữa danh sách sản phẩm và form
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #333;
+        }
+
+        .add-product-form {
+            display: flex;
+            flex-direction: column;
+
+            .form-group {
+                margin-bottom: 15px;
+
+                label {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    color: #555;
+                }
+
+                input,
+                textarea {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    transition: border-color 0.3s;
+
+                    &:focus {
+                        border-color: #007bff;
+                        outline: none;
+                    }
+
+                    &::placeholder {
+                        color: #aaa;
+                    }
+                }
+
+                textarea {
+                    resize: vertical;
+                    min-height: 100px;
+                }
+            }
+
+            .form-actions {
+                display: flex;
+                justify-content: space-between;
+
+                .submit-button {
+                    background-color: #28a745;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+
+                    &:hover {
+                        background-color: #218838;
+                    }
+                }
+
+                .cancel-button {
+                    background-color: #dc3545;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+
+                    &:hover {
+                        background-color: #c82333;
+                    }
+                }
+            }
+        }
+    }
+}
