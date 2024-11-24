@@ -68,10 +68,9 @@ const ShopApplication = () => {
         );
         setSnackbarMessage("Shop status updated successfully!");
         setSnackbarOpen(true);
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        
+        navigate('/shop-application');
+    
       } else {
         console.error("Error updating shop status:", response.data.messages);
       }

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { Snackbar, Alert } from '@mui/material';
-
+import { useNavigate } from "react-router-dom";
 const DetailApplication = () => {
   const { id } = useParams();
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchShop = async () => {
       try {
@@ -46,10 +46,7 @@ const DetailApplication = () => {
       if (response.data.isSuccess) {
         setSnackbarMessage('Shop status updated successfully!');
         setSnackbarOpen(true);
-        
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        navigate('/shop-application');
       } else {
         console.error("Error updating shop status:", response.data.messages);
       }
