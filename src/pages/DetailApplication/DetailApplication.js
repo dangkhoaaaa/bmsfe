@@ -10,6 +10,15 @@ const DetailApplication = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(shop ? shop.name : "");
+  const [description, setDescription] = useState(shop ? shop.description : "");
+  const [address, setAddress] = useState(shop ? shop.address : "");
+  const [phone, setPhone] = useState(shop ? shop.phone : "");
+  const [lat, setLat] = useState(shop ? shop.lat : "");
+  const [lng, setLng] = useState(shop ? shop.lng : "");
+  const [image, setImage] = useState(null);
+
   useEffect(() => {
     const fetchShop = async () => {
       try {
@@ -26,6 +35,18 @@ const DetailApplication = () => {
 
     fetchShop();
   }, [id]);
+
+  useEffect(() => {
+    if (shop) {
+      setName(shop.name);
+      setDescription(shop.description);
+      setAddress(shop.address);
+      setPhone(shop.phone);
+      setLat(shop.lat);
+      setLng(shop.lng);
+      setImage(shop.image);
+    }
+  }, [shop]);
 
   const updateShopStatus = async (status) => {
     try {
@@ -55,6 +76,47 @@ const DetailApplication = () => {
     }
   };
 
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+  };
+
+  const updateApplicationDetails = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('id', id);
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('address', address);
+      formData.append('lat', lat || "");
+      formData.append('lng', lng || "");
+      formData.append('phone', phone);
+
+      if (image) {
+        formData.append('image', image);
+      }
+
+      const response = await axios.put(
+        `https://bms-fs-api.azurewebsites.net/api/Shop/UpdateShopByStaff/${id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (response.data.isSuccess) {
+        setSnackbarMessage('Shop details updated successfully!');
+        setSnackbarOpen(true);
+        setIsEditing(false);
+      } else {
+        console.error("Error updating shop details:", response.data.messages);
+      }
+    } catch (error) {
+      console.error("Error updating shop details:", error);
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -73,18 +135,63 @@ const DetailApplication = () => {
           className="shop-image"
         />
         <div className="shop-details">
-          <p>
-            <strong>Địa chỉ:</strong> {shop.address}
-          </p>
-          <p>
+          <div className="detail-field">
+            <strong>Tên:</strong>
+            {isEditing ? (
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            ) : (
+              <span onClick={() => setIsEditing(true)}>{name}</span>
+            )}
+          </div>
+          <div className="detail-field">
+            <strong>Địa chỉ:</strong>
+            {isEditing ? (
+              <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+            ) : (
+              <span onClick={() => setIsEditing(true)}>{address}</span>
+            )}
+          </div>
+          <div className="detail-field">
             <strong>Email:</strong> {shop.email}
-          </p>
-          <p>
-            <strong>Mô tả:</strong> {shop.description}
-          </p>
-          <p>
+          </div>
+          <div className="detail-field">
+            <strong>Mô tả:</strong>
+            {isEditing ? (
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+            ) : (
+              <span onClick={() => setIsEditing(true)}>{description}</span>
+            )}
+          </div>
+          <div className="detail-field">
+            <strong>Điện thoại:</strong>
+            {isEditing ? (
+              <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            ) : (
+              <span onClick={() => setIsEditing(true)}>{phone}</span>
+            )}
+          </div>
+          <div className="detail-field">
+            <strong>Vĩ độ:</strong>
+            {isEditing ? (
+              <input type="text" value={lat} onChange={(e) => setLat(e.target.value)} />
+            ) : (
+              <span onClick={() => setIsEditing(true)}>{lat}</span>
+            )}
+          </div>
+          <div className="detail-field">
+            <strong>Kinh độ:</strong>
+            {isEditing ? (
+              <input type="text" value={lng} onChange={(e) => setLng(e.target.value)} />
+            ) : (
+              <span onClick={() => setIsEditing(true)}>{lng}</span>
+            )}
+          </div>
+          <div className="detail-field">
             <strong>Trạng thái:</strong> {shop.status}
-          </p>
+          </div>
+          {isEditing && (
+            <button onClick={updateApplicationDetails} className="submit-btn">Save</button>
+          )}
           <button onClick={() => updateShopStatus('ACCEPTED')} className="accept-btn">Accept</button>
           <button onClick={() => updateShopStatus('DENIED')} className="deny-btn">Deny</button>
         </div>
@@ -137,24 +244,26 @@ const DetailApplication = () => {
           flex: 1;
         }
 
-        .shop-details p {
-          font-size: 1.1rem;
-          color: #555;
-          margin-bottom: 10px;
+        .detail-field {
+          margin-bottom: 15px;
         }
 
-        .shop-details strong {
-          color: #333;
+        .detail-field input, .detail-field textarea {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-top: 5px;
         }
 
-             .details-btn, .accept-btn, .deny-btn {
+        .submit-btn, .accept-btn, .deny-btn {
           padding: 8px 16px;
           border-radius: 4px;
           cursor: pointer;
           margin-right: 5px;
         }
 
-        .details-btn {
+        .submit-btn {
           background-color: #007bff;
           color: white;
           border: none;
@@ -171,6 +280,7 @@ const DetailApplication = () => {
           color: white;
           border: none;
         }
+
         @media (max-width: 768px) {
           .shop-info {
             flex-direction: column;
@@ -183,10 +293,6 @@ const DetailApplication = () => {
 
           .shop-name {
             font-size: 1.5rem;
-          }
-
-          .shop-details p {
-            font-size: 1rem;
           }
         }
       `}</style>

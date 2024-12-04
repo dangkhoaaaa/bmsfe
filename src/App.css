@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.notification-item {
+  border-bottom: 1px solid #dddddd; /* Dòng kẻ giữa các item */
+  padding: 10px;
+  cursor: pointer; /* Thêm hiệu ứng khi hover */
+}
+.notification-item:hover {
+  background-color: #a5d6a4; /* Màu nền khi hover */
+}

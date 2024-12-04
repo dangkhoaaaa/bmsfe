@@ -1,12 +1,15 @@
 import * as Constant from "../constants/Constant"
 
-export const ApiCreateShop = async (email, name, phone, address, description) => {
+export const ApiCreateShop = async (email, name, phone, address, description, image) => {
     const formData = new FormData();
     formData.append("email", email);
     formData.append("address", address);
     formData.append("phone", phone);
     formData.append("name", name);
     formData.append("description", description);
+    if (image) {
+        formData.append('image', image);
+    }
     const response = await fetch(Constant.AIP_CREATE_SHOP, {
         method: "POST",
         body: formData,

@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   Typography,
   Toolbar,
-  Grid,
   Card,
   CardContent,
   CardMedia,
   Box,
   Divider,
-  Avatar,
 } from '@mui/material';
 import {
   Select,
@@ -17,18 +15,26 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
-import { ApiGetOrderById, ApiUpdateOrderStatus } from '../../services/OrderServices';
+import { ApiChangeOrderStatus, ApiGetOrderById } from '../../services/OrderServices';
 import { useLocation } from 'react-router-dom';
 import { StyledPaper } from '../OrderPage/ManageOrders.style';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal } from '@mui/material';
+import { CheckCircleOutline } from '@mui/icons-material';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const OrderDetailPage = () => {
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const [order, setOrder] = useState(null);
   const searchParams = new URLSearchParams(location.search);
   const orderId = searchParams.get('orderId');
   const [status, setStatus] = useState('ORDERED');
+  const token = localStorage.getItem('token');
+  const [isCompleteScan, setIsCompleteScan] = useState(true);
+  const handleCloseQR = () => {
+    setOpen(false);
+    fetchApiGetOrderById();
+  };
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
@@ -38,30 +44,61 @@ const OrderDetailPage = () => {
     fetchUpdateOrderStatus();
   };
 
+  const handleOpenQR = async () => {
+    setOpen(true);
+    setIsCompleteScan(false);
+    let statusCurrent = status;
+    const intervalId = setInterval(async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const result = await ApiGetOrderById(orderId, token);
+        if (result.ok) {
+          if (statusCurrent !== result.body.data.status) {
+            setIsCompleteScan(true);
+            clearInterval(intervalId);
+             // Sau 3 giây, đặt lại trạng thái và đóng modal
+            setTimeout(() => {
+              setIsCompleteScan(false);
+              setOpen(false);
+              fetchApiGetOrderById();
+            }, 3000);
+          }
+        } else {
+          alert(result.message);
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        console.error("Error checking order status:", error);
+        clearInterval(intervalId);
+      }
+    }, 2000);
+  };
+
   const fetchUpdateOrderStatus = async () => {
     const token = localStorage.getItem('token');
-    const result = await ApiUpdateOrderStatus(status, orderId, token);
+    const result = await ApiChangeOrderStatus(status, orderId, token);
     if (result.ok) {
       alert("Updated order status successfully!!!");
+      fetchApiGetOrderById();
     } else {
       alert(result.message);
     }
   }
 
+  const fetchApiGetOrderById = async () => {
+    if (!orderId) {
+      return;
+    }
+    const result = await ApiGetOrderById(orderId, token);
+    if (result.ok) {
+      setOrder(result.body.data);
+      setStatus(result.body.data.status);
+    } else {
+      alert(result.message);
+    }
+  };
+
   useEffect(() => {
-    const fetchApiGetOrderById = async () => {
-      if (!orderId) {
-        return;
-      }
-      const token = localStorage.getItem('token');
-      const result = await ApiGetOrderById(orderId, token);
-      if (result.ok) {
-        setOrder(result.body.data);
-        setStatus(result.body.data.status);
-      } else {
-        alert(result.message);
-      }
-    };
     fetchApiGetOrderById();
   }, [orderId]);
 
@@ -103,7 +140,7 @@ const OrderDetailPage = () => {
                     <span className='text-dark fw-bold'>Order Date:</span> {new Date(order.orderDate).toLocaleString()}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    <span className='text-dark fw-bold'>Status:</span> {status}
+                    <span className='text-dark fw-bold'>Status:</span> {order.status}
                   </Typography>
                 </div>
               </div>
@@ -190,19 +227,80 @@ const OrderDetailPage = () => {
             >
               Update Status
             </Button>
+            {status != "COMPLETE" && (
+              <Button
+                className='ms-2'
+                variant="contained"
+                color="primary"
+                onClick={handleOpenQR}
+              >
+                Show QR
+              </Button>
+            ) || (
+                <p className='fw-bold text-success pt-3'>This order has been completed</p>
+              )}
+
           </Box>
         </Box>
 
-        {/* QR Code */}
-        {/* <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-          <Typography variant="h6" sx={{ marginBottom: 1 }}>
-            QR Code
-          </Typography>
-          <img
-            src={`https://chart.googleapis.com/chart?cht=qr&chl=${order.qrCode}&chs=150x150&chld=L|0`}
-            alt="Order QR Code"
-          />
-        </Box> */}
+        <Modal open={open} onClose={handleCloseQR}>
+          {isCompleteScan && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 300,
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+                textAlign: 'center',
+                borderRadius: 2,
+              }}
+            >
+              <CheckCircleOutline sx={{ fontSize: 60, color: 'green', mb: 2 }} />
+              <Typography variant="h6" color="success.main" sx={{ mb: 2 }}>
+                Scan successful!
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCloseQR}
+              >
+                Close
+              </Button>
+            </Box>
+          ) || (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 300,
+                  bgcolor: 'background.paper',
+                  boxShadow: 24,
+                  p: 4,
+                  textAlign: 'center',
+                  borderRadius: 2,
+                }}
+              >
+                <QRCodeCanvas
+                  value={orderId}
+                  size={200} // Tăng kích thước QR code
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCloseQR}
+                  sx={{ mt: 2 }}
+                >
+                  Close
+                </Button>
+              </Box>
+            )}
+        </Modal>
 
         {/* Total Price */}
         <Box sx={{ marginTop: 2, textAlign: 'right' }}>

@@ -11,15 +11,27 @@ const Feedback = () => {
   const [feedbacksPerPage] = useState(5);
   const [totalFeedbacks, setTotalFeedbacks] = useState(0);
   const navigate = useNavigate();
-  const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
+  // Debounce logic
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  // Fetch feedbacks when debouncedSearchTerm or currentPage changes
   useEffect(() => {
     const fetchFeedbacks = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
           `https://bms-fs-api.azurewebsites.net/api/Feedback?search=${encodeURIComponent(
-            searchTerm
+            debouncedSearchTerm
           )}&pageIndex=${currentPage}&pageSize=${feedbacksPerPage}`
         );
 
@@ -35,21 +47,11 @@ const Feedback = () => {
     };
 
     fetchFeedbacks();
-  }, [searchTerm, currentPage]);
+  }, [debouncedSearchTerm, currentPage]);
 
   const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setCurrentPage(1);
-
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-
-    const newTimeout = setTimeout(() => {
-      setSearchTerm(value);
-    }, 300);
-
-    setDebounceTimeout(newTimeout);
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to the first page on search
   };
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -59,26 +61,17 @@ const Feedback = () => {
     // Add your API call here to block the feedback
   };
 
-  const handleSendFeedback = () => {
-    console.log("Sending feedback...");
-    // Add your API call here to send feedback
-  };
-
   return (
     <div className="feedback-list-container">
       <h1 className="heading">Feedback List</h1>
 
-      <div className="search-container">
+      <div className="search-box">
         <input
           type="text"
-          className="search-input"
-          placeholder="Search feedbacks..."
+          placeholder="Search..."
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        <button className="search-button">
-          <i className="fas fa-search"></i>
-        </button>
       </div>
 
       {loading ? (
@@ -196,28 +189,21 @@ const Feedback = () => {
           margin-bottom: 20px;
         }
 
-        .search-container {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 20px;
+        .search-box {
+          margin-bottom: 1rem;
         }
 
-        .search-input {
-          padding: 10px;
-          font-size: 16px;
-          width: 300px;
-          border: 1px solid #ccc;
+        .search-box input {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #ddd;
           border-radius: 4px;
+          font-size: 0.9rem;
         }
 
-        .search-button {
-          padding: 10px;
-          background-color: #00cc69;
-          border: none;
-          color: white;
-          cursor: pointer;
-          margin-left: 10px;
-          border-radius: 4px;
+        .search-box input:focus {
+          outline: none;
+          border-color: #4caf50;
         }
 
         .feedback-table {

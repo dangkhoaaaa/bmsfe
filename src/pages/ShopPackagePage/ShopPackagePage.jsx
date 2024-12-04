@@ -12,6 +12,7 @@ const ShopPackagePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const PAGE_SIZE_DEFAULT = 10;
   const navigate = useNavigate();
 
   const handleBuyNow = (id) => {
@@ -25,11 +26,11 @@ const ShopPackagePage = () => {
 
   const fetchPackages = async () => {
     const token = localStorage.getItem('token');
-    const result = await ApiGetPackages(searchTerm, true, currentPage, 6, token);
+    const result = await ApiGetPackages(searchTerm, true, currentPage, PAGE_SIZE_DEFAULT, token);
 
     if (result.ok) {
       const packageList = result.body.data.data; // Danh sách packages
-      const total = Math.ceil(result.body.data.total / 6);
+      const total = Math.ceil(result.body.data.total / PAGE_SIZE_DEFAULT);
 
       // Gọi fetchPackageBoughts để lấy danh sách đã mua
       const boughtResult = await fetchPackageBoughts();
@@ -119,7 +120,12 @@ const ShopPackagePage = () => {
                   </td>
                   <td>{row.name}</td>
                   <td>{row.duration}</td>
-                  <td>{row.price}</td>
+                  <td>
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(row.price)}
+                  </td>
                   <td>
                     {row.isBought && (
                       <p className='fw-bold text-success'>Purchased </p>

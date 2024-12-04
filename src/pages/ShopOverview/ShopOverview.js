@@ -6,7 +6,7 @@ const ShopOverview = () => {
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(""); // State for debounced search term
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [shopsPerPage] = useState(5);
   const [totalShops, setTotalShops] = useState(0);
@@ -36,16 +36,22 @@ const ShopOverview = () => {
     fetchShops();
   }, [debouncedSearchTerm, currentPage]);
 
-  // Debounce effect for search
+  // Debounce logic for search
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm); // Update debounced term after delay
-    }, 300); // Adjust debounce delay as needed
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
 
     return () => {
-      clearTimeout(handler); // Cleanup debounce timeout
+      clearTimeout(handler);
     };
   }, [searchTerm]);
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset lại trang đầu khi tìm kiếm thay đổi
+  };
 
   const handleViewDetails = (id) => {
     navigate(`/shop-details/${id}`);
@@ -65,27 +71,21 @@ const ShopOverview = () => {
     return stars;
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="shop-overview-container">
       <h1>Shop Overview</h1>
-      <div className="search-container">
+      <div className="search-box">
         <input
           type="text"
-          className="search-input"
-          placeholder="Search shops..."
+          placeholder="Search..."
           value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value); // Update search term immediately
-            setCurrentPage(1); // Reset to first page when search changes
-          }}
+          onChange={handleSearchChange} // Đã sửa lỗi tại đây
         />
       </div>
 
-      {shops.length === 0 ? (
+      {loading ? (
+        <div className="loading-spinner">Loading...</div>
+      ) : shops.length === 0 ? (
         <div className="no-results">No shops found.</div>
       ) : (
         <table className="shop-table">
@@ -116,7 +116,10 @@ const ShopOverview = () => {
                 <td>{shop.description}</td>
                 <td>{renderStars(shop.rate)}</td>
                 <td>
-                  <button onClick={() => handleViewDetails(shop.id)}>
+                  <button
+                    className="view-details-btn"
+                    onClick={() => handleViewDetails(shop.id)}
+                  >
                     View Details
                   </button>
                 </td>
@@ -147,15 +150,21 @@ const ShopOverview = () => {
         .shop-overview-container {
           padding: 20px;
         }
-        .search-container {
-          margin-bottom: 20px;
+         .search-box {
+          margin-bottom: 1rem;
         }
-        .search-input {
-          padding: 10px;
-          font-size: 16px;
-          width: 300px;
-          border: 1px solid #ccc;
+
+        .search-box input {
+          width: 100%;
+          padding: 0.5rem;
+          border: 1px solid #ddd;
           border-radius: 4px;
+          font-size: 0.9rem;
+        }
+
+        .search-box input:focus {
+          outline: none;
+          border-color: #4caf50;
         }
         .shop-table {
           width: 100%;
@@ -169,7 +178,7 @@ const ShopOverview = () => {
         }
         .star {
           color: #ccc; /* Default star color */
-          font-size: 20px; /* Adjust size as needed */
+          font-size: 20px;
         }
         .star.filled {
           color: #ffcc00; /* Color for filled stars */
@@ -185,6 +194,7 @@ const ShopOverview = () => {
           border: 1px solid #ddd;
           background-color: #fff;
           cursor: pointer;
+          transition: background-color 0.3s;
         }
         .pagination-button.active {
           background-color: #00cc69;
@@ -198,6 +208,24 @@ const ShopOverview = () => {
           font-size: 18px;
           color: #777;
           margin: 20px 0;
+        }
+        .loading-spinner {
+          text-align: center;
+          font-size: 18px;
+          color: #00cc69;
+          margin: 20px 0;
+        }
+        .view-details-btn {
+          padding: 8px 16px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+        .view-details-btn:hover {
+          background-color: #0056b3;
         }
       `}</style>
     </div>

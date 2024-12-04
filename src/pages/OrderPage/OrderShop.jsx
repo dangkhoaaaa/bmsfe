@@ -8,7 +8,8 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
+  Pagination
 } from '@mui/material';
 import {
   StyledPaper,
@@ -18,7 +19,7 @@ import {
   StyledTableRow,
   StyledTableCell,
 } from './ManageOrders.style';
-import { ApiGetOrderByShopId } from '../../services/OrderServices';
+import { ApiGetListOrders, ApiGetOrderByShopId } from '../../services/OrderServices';
 import { useNavigate } from 'react-router-dom';
 
 const OrderShop = () => {
@@ -26,15 +27,20 @@ const OrderShop = () => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('ORDERED');
   const [searchTerm, setSearchTerm] = useState(''); // State for the search term
+  const [totalOrders, setTotalOrders] = useState(0); // Total orders for pagination
+  const PAGE_SIZE_DEFAULT = 10;
+  const IS_DESC = true;
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   // Fetch orders from the API
   const fetchOrdersByShopId = async () => {
     const shopId = localStorage.getItem('shopId');
     const token = localStorage.getItem('token');
-    const result = await ApiGetOrderByShopId(shopId, status, searchTerm, null, 1, 10, token);
+    const result = await ApiGetOrderByShopId(shopId, status, searchTerm, IS_DESC, currentPage, PAGE_SIZE_DEFAULT, token);
     if (result.ok) {
       setOrders(result.body.data.data);
+      setTotalOrders(result.body.data.total);
     } else {
       alert(result.message);
     }
@@ -43,7 +49,7 @@ const OrderShop = () => {
 
   useEffect(() => {
     fetchOrdersByShopId();
-  }, [searchTerm, status]);
+  }, [searchTerm, status, currentPage]);
 
   // Filter orders based on the search term
   const filteredOrders = orders.filter(order => {
@@ -60,9 +66,9 @@ const OrderShop = () => {
     return <Typography variant="h6">Loading orders...</Typography>;
   }
 
-  // if (!Array.isArray(orders) || orders.length === 0) {
-  //   return <Typography variant="h6">No orders available.</Typography>;
-  // }
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   const handleNavigateToDetail = (id) => {
     navigate(`/shop/orders/detail?orderId=${id}`);
@@ -179,6 +185,14 @@ const OrderShop = () => {
           </TableBody>
         </StyledTable>
       </StyledTableContainer>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+        <Pagination
+          count={Math.ceil(totalOrders / PAGE_SIZE_DEFAULT)} // Total pages
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </div>
     </StyledPaper>
   );
 };

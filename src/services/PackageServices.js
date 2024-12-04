@@ -36,6 +36,40 @@ export const ApiBuyPackage = async (shopId, packageId, token) => {
     return Constant.ResponseData(response);
 }
 
+export const ApiCreatePackage = async (name, price, description, duration, token) => {
+    const response = await fetch(Constant.API_ADD_PACKAGE, {
+        method: "POST",
+        headers: Constant.HTTP_HEADER_TOKEN(token),
+        body: JSON.stringify({
+            name,
+            price,
+            description,
+            duration
+        }),
+    });
+    return Constant.ResponseData(response);
+}
+export const ApiUpdatePackage = async (id, name, price, description, duration, token) => {
+    const response = await fetch(`${Constant.API_UPDATE_PACKAGE}${id}`, {
+        method: "PUT",
+        headers: Constant.HTTP_HEADER_TOKEN(token),
+        body: JSON.stringify({
+            name,
+            price,
+            description,
+            duration
+        }),
+    });
+    return Constant.ResponseData(response);
+}
+export const ApiDeletePackage = async (id, token) => {
+    const response = await fetch(`${Constant.API_DELETE_PACKAGE}${id}`, {
+        method: "DELETE",
+        headers: Constant.HEADER_TOKEN(token),
+    });
+    return Constant.ResponseData(response);
+}
+
 export const ApiCreatePaymentVNPayURL = async (shopId, packageId, fullName, packageName, packagePrice, token) => {
     const formData = new FormData();
     formData.append("shopId", shopId);

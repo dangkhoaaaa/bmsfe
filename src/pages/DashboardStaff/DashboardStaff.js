@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Grid, CircularProgress, Paper } from "@mui/material";
-import { Bar, Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import axios from "axios";
 import "chart.js/auto";
 
@@ -37,6 +37,8 @@ const DashboardStaff = () => {
   const [ordersData, setOrdersData] = useState([]);
   const [revenueData, setRevenueData] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0); // New state for total revenue
+  const [totalOrders, setTotalOrders] = useState(0); // New state for total orders
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -48,6 +50,7 @@ const DashboardStaff = () => {
       try {
         const token = localStorage.getItem("token");
         const year = 2024;
+        const month = 11; // November
 
         // Fetch monthly new users
         const userRequests = Array.from({ length: 12 }, (_, i) =>
@@ -78,11 +81,48 @@ const DashboardStaff = () => {
           setTotalUsers(totalUsersResponse.data.data);
         }
 
-        // Fetch order and revenue data (replace with actual API if available)
+        // Fetch revenue data for each month
+        const revenueRequests = Array.from({ length: 12 }, (_, i) =>
+          axios.get(
+            `https://bms-fs-api.azurewebsites.net/api/Transaction/GetTotalRevenue?month=${
+              i + 1
+            }&year=${year}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          )
+        );
+
+        const revenueResponses = await Promise.all(revenueRequests);
+        const monthlyRevenue = revenueResponses.map((response) =>
+          response.data.isSuccess ? response.data.data : 0
+        );
+        setRevenueData(monthlyRevenue);
+
+        // Fetch total revenue for November
+        const totalRevenueResponse = await axios.get(
+          `https://bms-fs-api.azurewebsites.net/api/Transaction/GetTotalRevenue?month=${month}&year=${year}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (totalRevenueResponse.data.isSuccess) {
+          setTotalRevenue(totalRevenueResponse.data.data); // Update total revenue
+        }
+
+        // Fetch total orders for November
+        const totalOrdersResponse = await axios.get(
+          `https://bms-fs-api.azurewebsites.net/api/Order/GetTotalOrder?month=${month}&year=${year}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (totalOrdersResponse.data.isSuccess) {
+          setTotalOrders(totalOrdersResponse.data.data); // Update total orders
+        }
+
+        // Fetch orders data (you can replace this with an actual API if available)
         setOrdersData([50, 60, 70, 85, 95, 110, 120, 140, 150, 160, 170, 200]); // Example data
-        setRevenueData([
-          500, 600, 700, 850, 950, 1100, 1200, 1400, 1500, 1600, 1700, 2000,
-        ]); // Example data
       } catch (error) {
         console.error("Error fetching data:", error);
         setError(error.message || "Failed to fetch data");
@@ -152,7 +192,7 @@ const DashboardStaff = () => {
       },
       {
         label: "Revenue (x1000 VND)",
-        data: revenueData.map((r) => r / 1000),
+        data: revenueData.map((r) => r / 1000), // Divide by 1000 to display in thousands
         backgroundColor: "#ffa726",
         borderColor: "#fb8c00",
         borderWidth: 1,
@@ -185,16 +225,14 @@ const DashboardStaff = () => {
         <Grid item xs={12} sm={6} md={3}>
           <StatsCard
             title="Total Orders"
-            value={ordersData.reduce((acc, val) => acc + val, 0)}
+            value={totalOrders} // Display total orders for November
             gradient="linear-gradient(135deg, #66BB6A 0%, #43A047 100%)"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatsCard
             title="Total Revenue"
-            value={`${revenueData
-              .reduce((acc, val) => acc + val, 0)
-              .toLocaleString()}đ`}
+            value={`${totalRevenue.toLocaleString()}đ`} // Display total revenue in VND
             gradient="linear-gradient(135deg, #FFA726 0%, #FB8C00 100%)"
           />
         </Grid>

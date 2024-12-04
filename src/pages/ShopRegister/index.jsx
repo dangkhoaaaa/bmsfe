@@ -23,6 +23,7 @@ const emptyUserData = {
   address: "",
   phone: "",
   description: "",
+  avatar: null, // Thêm avatar vào state
 };
 
 export default function ShopRegister() {
@@ -39,14 +40,25 @@ export default function ShopRegister() {
     });
   };
 
+  const handleAvatarChange = (file) => {
+    if (file) {
+      const previewURL = URL.createObjectURL(file); // Tạo URL preview từ file
+      setData((prevData) => ({
+        ...prevData,
+        avatar: file,
+        previewURL, // Thêm URL preview vào state
+      }));
+    }
+  };
+
   const handleSubmitRegister = async () => {
     if (!isValidateForm()) {
       return;
     }
-    const result = await ApiCreateShop(data.email, data.name, data.phone, selectedAddress, data.description);
+    const result = await ApiCreateShop(data.email, data.name, data.phone, selectedAddress, data.description, data.avatar);
     if (result.ok) {
       setData(emptyUserData);
-      alert("Shop registration successful, the password has been sent to your email.");
+      alert("Your shop registration request  successful, the Application has been submitted. Please wait for staff verification.");
       navigate('/login');
     } else {
       alert(result.message);
@@ -120,7 +132,7 @@ export default function ShopRegister() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: '#088A08' }}>
-            <LockOutlinedIcon />
+            <LockOutlinedIcon/>
           </Avatar>
           <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: 2, fontWeight: 'bold', color: '#088A08' }}>
             SHOP REGISTRATION
@@ -140,6 +152,51 @@ export default function ShopRegister() {
                     style: { borderRadius: '30px' },
                   }}
                 />
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => handleAvatarChange(e.target.files[0])}
+                />
+                <div className='d-flex align-items-center'>
+                  <Typography className='mx-2'>
+                    Shop Avatar:
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    htmlFor="avatar-upload"
+                    sx={{
+                      background: 'linear-gradient(135deg, #b4ec51, #429321)',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                      '&:hover': {
+                        background: 'linear-gradient(135deg, #429321, #0f9b0f)',
+                      },
+                      textTransform: 'none',
+                    }}
+                  >
+                    Upload Avatar
+                  </Button>
+                </div>
+                {data.previewURL && ( // Kiểm tra xem đã có preview chưa
+                  <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <img
+                      src={data.previewURL}
+                      alt="Avatar Preview"
+                      style={{
+                        maxWidth: '100%',
+                        height: 'auto',
+                        borderRadius: '10px',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                      }}
+                    />
+                  </Box>
+                )}
               </Grid>
               <Grid item xs={12} sm={12}>
                 <TextField

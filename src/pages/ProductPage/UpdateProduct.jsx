@@ -4,11 +4,11 @@ import './UpdateProduct.scss';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     TextField, Button, IconButton, Box, Typography, Grid,
-    Tooltip, Avatar
+    Tooltip, Avatar, Switch, FormControlLabel
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ApiGetProductByID, ApiUpdateProduct } from '../../services/ProductServices';
+import { ApiChangeStockOut, ApiGetProductByID, ApiUpdateProduct } from '../../services/ProductServices';
 
 const UpdateProduct = ({ product, onClose, onSave }) => {
     const [showImages, setShowImages] = useState(false);
@@ -19,6 +19,8 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         price: product.price || 0,
         images: [],
     });
+    const token = localStorage.getItem('token');
+    const [showOutOfStock, setShowOutOfStock] = useState(false);
     const [imageFiles, setImageFiles] = useState([]);
     const [errors, setErrors] = useState({
         name: "",
@@ -86,7 +88,6 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         if (!validate()) {
             return;
         }
-        const token = localStorage.getItem('token');
         const result = await ApiUpdateProduct(updatedProduct, product.id, imageFiles, token);
         if (result.ok) {
             alert('Dish updated successfully.');
@@ -101,7 +102,6 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         if (showImages) {
             setShowImages(false);
         } else {
-            const token = localStorage.getItem('token');
             const result = await ApiGetProductByID(product.id, token);
             if (result.ok) {
                 setImages(result.body.data.images);
@@ -109,6 +109,18 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
             } else {
                 alert(result.message);
             }
+        }
+    }
+
+    const handleToggleOutOfStock = async (value) => {
+        setShowOutOfStock(value);
+        const result = await ApiChangeStockOut(product.id, token);
+        if (result.ok) {
+            alert('Dish updated successfully.');
+            onSave();
+            onClose();
+        } else {
+            alert(result.message);
         }
     }
 
@@ -250,12 +262,35 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button type="submit" variant="contained" color="primary">
-                        Save
-                    </Button>
-                    <Button onClick={onClose} variant="outlined" color="secondary">
-                        Cancel
-                    </Button>
+                    <div className='w-100 d-flex px-3'>
+                        <FormControlLabel
+                            className='flex-grow-1'
+                            control={
+                                <Switch
+                                    checked={showOutOfStock}
+                                    onChange={(e) => handleToggleOutOfStock(e.target.checked)}
+                                    sx={{
+                                        '& .MuiSwitch-switchBase.Mui-checked': {
+                                            color: '#4caf50',
+                                        },
+                                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                            backgroundColor: '#4caf50',
+                                        },
+                                    }}
+                                />
+                            }
+                            label={showOutOfStock ? 'Out of Stock' : 'In Stock'}
+                            sx={{
+                                width: '150px',
+                            }}
+                        />
+                        <Button className='me-2' type="submit" variant="contained" color="primary">
+                            Save
+                        </Button>
+                        <Button onClick={onClose} variant="outlined" color="secondary">
+                            Cancel
+                        </Button>
+                    </div>
                 </DialogActions>
             </form>
         </Dialog>

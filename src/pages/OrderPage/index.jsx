@@ -1,77 +1,93 @@
-// index.jsx
 import React, { useEffect, useState } from 'react';
-import { Button,Select,MenuItem,FormControl,InputLabel,Typography,Toolbar,TableBody,} from '@mui/material';
-import {StyledPaper,StyledTableContainer,StyledTable,StyledTableHead,StyledTableRow,StyledTableCell,} from './ManageOrders.style';
+import { Button, Typography, Toolbar, TableBody, TextField, Select, MenuItem, FormControl, InputLabel, Pagination } from '@mui/material';
+import { StyledPaper, StyledTableContainer, StyledTable, StyledTableHead, StyledTableRow, StyledTableCell,} from './ManageOrders.style';
+import { ApiGetListOrders, ApiGetOrderByShopId } from '../../services/OrderServices';
+import { useNavigate } from 'react-router-dom';
 
-const ManageOrdersPage = () => {
+const ManageOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingStatus, setEditingStatus] = useState({});
+  const [status, setStatus] = useState('ORDERED');
+  const [searchTerm, setSearchTerm] = useState(''); // State for the search term
+  const [totalOrders, setTotalOrders] = useState(0); // Total orders for pagination
+  const PAGE_SIZE_DEFAULT = 10;
+  const IS_DESC = true;
+  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
 
   // Fetch orders from the API
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch('https://bms-fs-api.azurewebsites.net/api/Order/GetListOrders?pageIndex=2&pageSize=5', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch orders');
-      }
-
-      const data = await response.json();
-      console.log(data);
-
-      if (Array.isArray(data.data.data)) {
-        setOrders(data.data.data);
-      } else {
-        console.error('Fetched data is not an array', data.data.data);
-        setOrders([]);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+  const fetchOrdersByShopId = async () => {
+    const shopId = localStorage.getItem('shopId');
+    const token = localStorage.getItem('token');
+    const result = await ApiGetListOrders(status, searchTerm, IS_DESC, currentPage, PAGE_SIZE_DEFAULT, token);
+    if (result.ok) {
+      setOrders(result.body.data.data);
+      setTotalOrders(result.body.data.total);
+    } else {
+      alert(result.message);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    fetchOrdersByShopId();
+  }, [searchTerm, status, currentPage]);
 
-  // Handle status change
-  const handleStatusChange = (id, newStatus) => {
-    setEditingStatus({
-      ...editingStatus,
-      [id]: newStatus,
-    });
-  };
-
-  // Update order status
-  const handleUpdateStatus = (id) => {
-    const updatedOrders = orders.map((order) =>
-      order.id === id ? { ...order, status: editingStatus[id] || order.status } : order
+  // Filter orders based on the search term
+  const filteredOrders = orders.filter(order => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      order.id.toString().includes(searchLower) ||
+      order.firstName.toLowerCase().includes(searchLower) ||
+      order.lastName.toLowerCase().includes(searchLower) ||
+      order.shopName.toLowerCase().includes(searchLower)
     );
-    setOrders(updatedOrders);
-  };
+  });
 
   if (loading) {
     return <Typography variant="h6">Loading orders...</Typography>;
   }
 
-  if (!Array.isArray(orders) || orders.length === 0) {
-    return <Typography variant="h6">No orders available.</Typography>;
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+  const handleNavigateToDetail = (id) => {
+    navigate(`/shop/orders/detail?orderId=${id}`);
   }
 
   return (
     <StyledPaper>
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
+      <Toolbar sx={{ justifyContent: 'space-between', marginBottom: 2 }}>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Manage Orders
+          SHOP ORDERS
         </Typography>
+        <div>
+          {/* SELECT BOX */}
+          <FormControl size="small" sx={{ minWidth: 150 }} className='me-2'>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              label="Status"
+            >
+              <MenuItem value="ORDERED">Ordered</MenuItem>
+              <MenuItem value="PREPARING">Preparing</MenuItem>
+              <MenuItem value="PREPARED">Prepared</MenuItem>
+              <MenuItem value="TAKENOVER">Taken Over</MenuItem>
+              <MenuItem value="CANCEL">Cancel</MenuItem>
+              <MenuItem value="COMPLETE">Complete</MenuItem>
+            </Select>
+          </FormControl>
+          {/* Search Bar */}
+          <TextField
+            label="Search Orders"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by Order ID, Customer, or Shop"
+            size="small"
+          />
+        </div>
       </Toolbar>
 
       <StyledTableContainer>
@@ -79,52 +95,86 @@ const ManageOrdersPage = () => {
           <StyledTableHead>
             <StyledTableRow>
               <StyledTableCell>Order ID</StyledTableCell>
-              <StyledTableCell>Customer ID</StyledTableCell>
-              <StyledTableCell>Shop ID</StyledTableCell>
+              <StyledTableCell>Customer </StyledTableCell>
+              <StyledTableCell>Shop </StyledTableCell>
               <StyledTableCell>Total Price</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
+              <StyledTableCell>Order Date</StyledTableCell>
               <StyledTableCell>Actions</StyledTableCell>
             </StyledTableRow>
           </StyledTableHead>
           <TableBody>
-            {orders.map((order) => (
-              <StyledTableRow key={order.id}>
-                <StyledTableCell>{order.id}</StyledTableCell>
-                <StyledTableCell>{order.customerId}</StyledTableCell>
-                <StyledTableCell>{order.shopId}</StyledTableCell>
-                <StyledTableCell>${order.totalPrice.toFixed(2)}</StyledTableCell>
-                <StyledTableCell>
-                  {/* <FormControl fullWidth>
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                      value={editingStatus[order.id] || order.status}
-                      label="Status"
-                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
+          {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
+                <StyledTableRow key={order.id}>
+                  <StyledTableCell>{order.id}</StyledTableCell>
+                  <StyledTableCell>
+                    <img
+                      src={order.avatar ?? '/user-default.png'}
+                      alt={`${order.firstName} ${order.lastName}`}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: '50%',
+                        marginRight: 8,
+                      }}
+                    />
+                    {order.firstName} {order.lastName}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <img
+                      src={order.shopImage}
+                      alt={order.shopName}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: '5%',
+                        marginRight: 8,
+                      }}
+                    />
+                    {order.shopName}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(order.totalPrice)}
+                  </StyledTableCell>
+                  <StyledTableCell>{order.status}</StyledTableCell>
+                  <StyledTableCell>
+                    {new Date(order.orderDate).toLocaleString()}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleNavigateToDetail(order.id)}
                     >
-                      <MenuItem value="DRAFT">Draft</MenuItem>
-                      <MenuItem value="PENDING">Pending</MenuItem>
-                      <MenuItem value="PREPARED">Prepared</MenuItem>
-                      <MenuItem value="COMPLETE">Complete</MenuItem>
-                      <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                    </Select>
-                  </FormControl> */}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleUpdateStatus(order.id)}
-                  >
-                    Update
-                  </Button>
+                       View Details
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
+            ) : (
+              <StyledTableRow>
+                <StyledTableCell colSpan={7} align="center">
+                  Not Found Any Order
                 </StyledTableCell>
               </StyledTableRow>
-            ))}
+            )}
           </TableBody>
         </StyledTable>
       </StyledTableContainer>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+        <Pagination
+          count={Math.ceil(totalOrders / PAGE_SIZE_DEFAULT)} // Total pages
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+        />
+      </div>
     </StyledPaper>
   );
 };
 
-export default ManageOrdersPage;
+export default ManageOrderPage;

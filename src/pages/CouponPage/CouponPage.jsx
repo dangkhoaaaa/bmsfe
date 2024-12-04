@@ -129,9 +129,24 @@ const CouponPage = () => {
                   <td>{new Date(coupon.startDate).toLocaleDateString()}</td>
                   <td>{new Date(coupon.endDate).toLocaleDateString()}</td>
                   <td>{coupon.percentDiscount}%</td>
-                  <td>${coupon.maxDiscount}</td>
-                  <td>${coupon.minPrice}</td>
-                  <td>${coupon.minDiscount}</td>
+                  <td>
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(coupon.maxDiscount)}
+                  </td>
+                  <td>
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(coupon.minPrice)}
+                  </td>
+                  <td>
+                    {new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(coupon.minDiscount)}
+                  </td>
                   <td className="coupon-actions">
                     <AiOutlineEdit
                       onClick={() => handleSetCouponEdit(coupon)}
@@ -174,11 +189,11 @@ const CouponPage = () => {
         </div>
 
         {isPopupOpen && couponEdit &&
-            <UpdateCoupon
-              coupon={couponEdit}
-              onSave={fetchCoupons}
-              onClose={() => setPopupOpen(false)} 
-            />
+          <UpdateCoupon
+            coupon={couponEdit}
+            onSave={fetchCoupons}
+            onClose={() => setPopupOpen(false)}
+          />
         }
 
       </div>
