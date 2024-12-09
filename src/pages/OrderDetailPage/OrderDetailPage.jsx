@@ -32,6 +32,7 @@ const OrderDetailPage = () => {
   const [order, setOrder] = useState(null);
   const searchParams = new URLSearchParams(location.search);
   const orderId = searchParams.get('orderId');
+  const shopId = localStorage.getItem('shopId');
   const [status, setStatus] = useState('ORDERED');
   const token = localStorage.getItem('token');
   const [isCompleteScan, setIsCompleteScan] = useState(true);
@@ -68,7 +69,7 @@ const OrderDetailPage = () => {
           if (statusCurrent !== result.body.data.status) {
             setIsCompleteScan(true);
             clearInterval(intervalId);
-             // Sau 3 giây, đặt lại trạng thái và đóng modal
+            // Sau 3 giây, đặt lại trạng thái và đóng modal
             setTimeout(() => {
               setIsCompleteScan(false);
               setOpen(false);
@@ -110,7 +111,7 @@ const OrderDetailPage = () => {
       socket.emit('new-order', orderData); // Send notification to shop
     }
   };
-  
+
   const fetchApiGetOrderById = async () => {
     if (!orderId) {
       return;
@@ -242,40 +243,41 @@ const OrderDetailPage = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* selected box "ORDERED, CHECKING, PREPARING, PREPARED, TAKENOVER, CANCEL, COMPLETE" and button update status order */}
-          <Box sx={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-            <FormControl sx={{ minWidth: 200 }}>
-              <InputLabel>Status</InputLabel>
-              <Select value={status} onChange={handleStatusChange} label="Status">
-                <MenuItem value="ORDERED">Ordered</MenuItem>
-                <MenuItem value="PREPARING">Preparing</MenuItem>
-                <MenuItem value="PREPARED">Prepared</MenuItem>
-                <MenuItem value="TAKENOVER">Taken Over</MenuItem>
-                <MenuItem value="CANCEL">Cancel</MenuItem>
-                <MenuItem value="COMPLETE">Complete</MenuItem>
-              </Select>
-            </FormControl>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleUpdateStatus}
-            >
-              Update Status
-            </Button>
-            {order.status != "COMPLETE" && (
+          {shopId && (
+            <Box sx={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel>Status</InputLabel>
+                <Select value={status} onChange={handleStatusChange} label="Status">
+                  <MenuItem value="ORDERED">Ordered</MenuItem>
+                  <MenuItem value="PREPARING">Preparing</MenuItem>
+                  <MenuItem value="PREPARED">Prepared</MenuItem>
+                  <MenuItem value="TAKENOVER">Taken Over</MenuItem>
+                  <MenuItem value="CANCEL">Cancel</MenuItem>
+                  <MenuItem value="COMPLETE">Complete</MenuItem>
+                </Select>
+              </FormControl>
               <Button
-                className='ms-2'
                 variant="contained"
                 color="primary"
-                onClick={handleOpenQR}
+                onClick={handleUpdateStatus}
               >
-                Show QR
+                Update Status
               </Button>
-            ) || (
-                <p className='fw-bold text-success pt-3'>This order has been completed</p>
-              )}
+              {order.status != "COMPLETE" && (
+                <Button
+                  className='ms-2'
+                  variant="contained"
+                  color="primary"
+                  onClick={handleOpenQR}
+                >
+                  Show QR
+                </Button>
+              ) || (
+                  <p className='fw-bold text-success pt-3'>This order has been completed</p>
+                )}
 
-          </Box>
+            </Box>
+          )}
         </Box>
 
         <Modal open={open} onClose={handleCloseQR}>

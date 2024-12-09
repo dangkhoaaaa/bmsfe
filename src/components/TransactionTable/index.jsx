@@ -78,15 +78,8 @@ const TransactionsTable = () => {
     <Paper sx={{ padding: 2 }}>
       <Toolbar sx={{ pb: 3}}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Recent Transactions
+          Transactions
         </Typography>
-        <TextField
-          variant="outlined"
-          label="Search by User"
-          value={searchTerm}
-          onChange={handleSearch}
-          sx={{ width: '300px' }}
-        />
       </Toolbar>
       <TableContainer>
         <Table sx={{ minWidth: 650 }} aria-label="transactions table">
