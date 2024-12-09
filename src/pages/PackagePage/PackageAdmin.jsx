@@ -6,6 +6,7 @@ import Avatar from '@mui/material/Avatar';
 import { GetImagePackage } from '../../utils/StringUtils';
 import Button from '@mui/material/Button';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
 
 const PackagePage = () => {
   const [packages, setPackages] = useState([]);
@@ -17,6 +18,14 @@ const PackagePage = () => {
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false); // Quản lý trạng thái dialog
   const token = localStorage.getItem('token');
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
 
   const [currentPackage, setCurrentPackage] = useState({
     id: null,
@@ -43,13 +52,16 @@ const PackagePage = () => {
   };
   const handleSavePackage = async () => {
     var result = null;
+    var msgSuccess = "Package create successfully!"
     if (isUpdate) {
+      var msgSuccess = "Package update successfully!"
       result = await ApiUpdatePackage(currentPackage.id, currentPackage.name, currentPackage.price, currentPackage.description, currentPackage.duration, token);
     } else {
       result = await ApiCreatePackage(currentPackage.name, currentPackage.price, currentPackage.description, currentPackage.duration, token);
     }
     if (result.ok) {
-      alert("Successfully!");
+      setMessageAlert(msgSuccess);
+      setOpenAlert(true);
     } else {
       alert(result.message);
       return;
@@ -89,7 +101,8 @@ const PackagePage = () => {
     if (confirmDelete) {
       const result = await ApiDeletePackage(id, token);
       if (result.ok) {
-        alert("Package deleted successfully!");
+        setMessageAlert('Package deleted successfully!'); // Đặt thông báo
+        setOpenAlert(true); // Mở Snackbar
         fetchPackages(); // Refresh danh sách packages sau khi xóa
       } else {
         alert(result.message);
@@ -244,6 +257,16 @@ const PackagePage = () => {
           <Button onClick={handleSavePackage} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

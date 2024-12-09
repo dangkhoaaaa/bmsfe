@@ -147,7 +147,7 @@ const ShopApplication = () => {
                     className="details-btn"
                     onClick={() => viewShopDetails(shop.id)}
                   >
-                    Xem Chi Tiết
+                     View Details
                   </button>
                 </td>
               </tr>

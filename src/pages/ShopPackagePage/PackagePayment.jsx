@@ -4,6 +4,7 @@ import './PackagePayment.scss';
 import { useLocation } from 'react-router-dom';
 import { ApiBuyPackage, ApiCreatePaymentVNPayURL, ApiGetPackageById } from '../../services/PackageServices';
 import { useNavigate } from 'react-router-dom';
+import { Snackbar, Alert } from '@mui/material';
 
 const PackagePayment = () => {
   const location = useLocation();
@@ -11,7 +12,14 @@ const PackagePayment = () => {
   const [price, setPrice] = useState(0); // Đơn giá VND
   const [packageName, setPackageName] = useState(""); // Đơn giá VND
   const navigate = useNavigate();
-
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
   const searchParams = new URLSearchParams(location.search);
   const packageId = searchParams.get('packageId');
 
@@ -48,8 +56,11 @@ const PackagePayment = () => {
       const shopId = localStorage.getItem('shopId');
       const result = await ApiBuyPackage(shopId, packageId, token);
       if (result.ok) {
-        alert("Your package purchase was successful.");
-        navigate(`/shop/package`);
+        setMessageAlert("Your package purchase was successful.");
+        setOpenAlert(true);
+        setTimeout(() => {
+          navigate(`/shop/package`);
+        }, 2000);
       } else {
         alert(result.message);
       }
@@ -118,6 +129,16 @@ const PackagePayment = () => {
           </div>
         </div>
       </div>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

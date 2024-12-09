@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './UpdateProduct.scss';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
-    TextField, Button, IconButton, Box, Typography, Grid,
+    Autocomplete, TextField, Chip, Button, IconButton, Box, Typography, Grid,
     Tooltip, Avatar, Switch, FormControlLabel
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ApiChangeStockOut, ApiGetProductByID, ApiUpdateProduct } from '../../services/ProductServices';
+import { ApiGetAllCategory, ApiGetCategoriesByProductId, ApiRegisterProductToCategory, ApiRemoveProductToCategory } from '../../services/CategoryServices';
 
 const UpdateProduct = ({ product, onClose, onSave }) => {
     const [showImages, setShowImages] = useState(false);
     const [images, setImages] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [categorySelected, setCategorySelected] = useState([]);
     const [updatedProduct, setUpdatedProduct] = useState({
         name: product.name || '',
         description: product.description || '',
@@ -20,13 +23,40 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         images: [],
     });
     const token = localStorage.getItem('token');
-    const [showOutOfStock, setShowOutOfStock] = useState(false);
+    const [showOutOfStock, setShowOutOfStock] = useState(product.isOutOfStock);
     const [imageFiles, setImageFiles] = useState([]);
     const [errors, setErrors] = useState({
         name: "",
         description: "",
         price: "",
     });
+
+    const handleCategoryChange = async (event, value, reason) => {
+        if (reason === 'selectOption') {
+            const addedChip = value.find((item) => !categorySelected.includes(item));
+            if (addedChip?.id) {
+                const result = await ApiRegisterProductToCategory(product.id, addedChip.id, token);
+                if (!result.ok) {
+                    alert(result.message);
+                }
+            }
+            console.log('Chip added, ID:', addedChip?.id);
+        } else if (reason === 'removeOption') {
+            const removedChip = categorySelected.find((item) => !value.includes(item));
+            console.log('Chip removed, ID:', removedChip?.id);
+            if (removedChip?.id) {
+                const result = await ApiRemoveProductToCategory(product.id, removedChip.id, token);
+                if (!result.ok) {
+                    alert(result.message);
+                }
+            }
+        }
+        setCategorySelected(value);
+    };
+    useEffect(() => {
+        fetchCategories();
+        fetchCategoriesByProductId();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -62,6 +92,27 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const fetchCategories = async () => {
+        const result = await ApiGetAllCategory("", true, 1, 100, token);
+        if (result.ok) {
+            setCategories(result.body.data.data);
+        } else {
+            alert(result.message);
+        }
+    }
+    const fetchCategoriesByProductId = async () => {
+        const result = await ApiGetCategoriesByProductId(product.id, "", true, 1, 100, token);
+        if (result.ok) {
+            const listCategories = [];
+            result.body.data.data.forEach(item => {
+                listCategories.push(item.category);
+            });
+            setCategorySelected(listCategories);
+        } else {
+            alert(result.message);
+        }
+    }
+
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files); // Lấy tất cả tệp hình ảnh
         setImageFiles(prev => [...prev, ...files]); // Cập nhật mảng file
@@ -90,7 +141,6 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         }
         const result = await ApiUpdateProduct(updatedProduct, product.id, imageFiles, token);
         if (result.ok) {
-            alert('Dish updated successfully.');
             onSave();
             onClose();
         } else {
@@ -116,7 +166,6 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
         setShowOutOfStock(value);
         const result = await ApiChangeStockOut(product.id, token);
         if (result.ok) {
-            alert('Dish updated successfully.');
             onSave();
             onClose();
         } else {
@@ -173,6 +222,34 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
                             error={!!errors.price}
                             helperText={errors.price}
                         />
+                         <Autocomplete
+                            multiple
+                            options={categories}
+                            getOptionLabel={(option) => option.name || ''}
+                            value={categorySelected}
+                            onChange={handleCategoryChange}
+                            freeSolo
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                            renderTags={(value, getTagProps) =>
+                                value.map((option, index) => (
+                                    <Chip
+                                        variant="outlined"
+                                        label={option.name}
+                                        {...getTagProps({ index })}
+                                        key={index}
+                                    />
+                                ))
+                            }
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="outlined"
+                                    label="Add Categories"
+                                    placeholder="Type and press Enter"
+                                />
+                            )}
+                        />
+
                         <Box>
                             <Typography variant="subtitle1" gutterBottom>
                                 Current Images *
@@ -298,21 +375,3 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
 };
 
 export default UpdateProduct;
-
-/*
-     const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUpdatedProduct((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (index, value) => {
-    const newImages = [...updatedProduct.images];
-    newImages[index] = value;
-    setUpdatedProduct((prev) => ({ ...prev, images: newImages }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(updatedProduct);
-  };
-*/

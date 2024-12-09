@@ -9,7 +9,7 @@ import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } 
 import { ApiGetShopById, ApiUpdateShop } from '../../services/ShopServices';
 import { useNavigate } from 'react-router-dom';
 import { ApiGetAddressAutoComplete } from '../../services/MapServices';
-
+import { Snackbar, Alert } from '@mui/material';
 
 export default function ShopProfile() {
   const navigate = useNavigate();
@@ -21,7 +21,14 @@ export default function ShopProfile() {
   const [titleAddress, setTitleAddress] = useState('');
   const [selectedAddress, setSelectedAddress] = useState('');
   const [debounceTimeout, setDebounceTimeout] = useState(null);
-
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
   const token = localStorage.getItem('token');
 
   const fetchAddressSuggestions = async (input) => {
@@ -117,7 +124,8 @@ export default function ShopProfile() {
       token
     );
     if (result.ok) {
-      alert("Update shop information successfully!");
+      setMessageAlert("Update shop information successfully!");
+      setOpenAlert(true);
       fetchProfileShopData();
       handleCloseEditDialog();
     } else {
@@ -273,6 +281,16 @@ export default function ShopProfile() {
             </Button>
           </DialogActions>
         </Dialog>
+        <Snackbar
+          open={openAlert}
+          autoHideDuration={3000}
+          onClose={handleCloseAlert}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+            {messageAlert}
+          </Alert>
+        </Snackbar>
       </ProfileCard>
     </ProfileContainer>
   );

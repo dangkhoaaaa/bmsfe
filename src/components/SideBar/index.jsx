@@ -69,6 +69,7 @@ const Sidebar = () => {
         path: "/shop-application",
       },
       { text: "Package", icon: <Inventory2OutlinedIcon />, path: "/admin/Package" },
+      { text: "Product Application", icon: <RestaurantMenuIcon />, path: "/productApplication" },
       { text: 'Customer', icon: <PersonIcon />, path: "/admin/customer-details" },
 
       { text: "Profile", icon: <PortraitIcon />, path: "/admin/profile" },

@@ -127,7 +127,7 @@ const DetailApplication = () => {
 
   return (
     <div className="shop-detail-container">
-      <h1 className="shop-name">Chi tiết đơn của {shop.name}</h1>
+      <h1 className="shop-name">Detail of application for {shop.name}</h1>
       <div className="shop-info">
         <img
           src={shop.image || "https://via.placeholder.com/200x150"}
@@ -136,7 +136,7 @@ const DetailApplication = () => {
         />
         <div className="shop-details">
           <div className="detail-field">
-            <strong>Tên:</strong>
+            <strong>Name:</strong>
             {isEditing ? (
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
             ) : (
@@ -144,7 +144,7 @@ const DetailApplication = () => {
             )}
           </div>
           <div className="detail-field">
-            <strong>Địa chỉ:</strong>
+            <strong>Address:</strong>
             {isEditing ? (
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
             ) : (
@@ -155,7 +155,7 @@ const DetailApplication = () => {
             <strong>Email:</strong> {shop.email}
           </div>
           <div className="detail-field">
-            <strong>Mô tả:</strong>
+            <strong>Description:</strong>
             {isEditing ? (
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
             ) : (
@@ -163,7 +163,7 @@ const DetailApplication = () => {
             )}
           </div>
           <div className="detail-field">
-            <strong>Điện thoại:</strong>
+            <strong>Phone:</strong>
             {isEditing ? (
               <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} />
             ) : (
@@ -171,7 +171,7 @@ const DetailApplication = () => {
             )}
           </div>
           <div className="detail-field">
-            <strong>Vĩ độ:</strong>
+            <strong>Latitude:</strong>
             {isEditing ? (
               <input type="text" value={lat} onChange={(e) => setLat(e.target.value)} />
             ) : (
@@ -179,7 +179,7 @@ const DetailApplication = () => {
             )}
           </div>
           <div className="detail-field">
-            <strong>Kinh độ:</strong>
+            <strong>Longitude:</strong>
             {isEditing ? (
               <input type="text" value={lng} onChange={(e) => setLng(e.target.value)} />
             ) : (
@@ -187,7 +187,7 @@ const DetailApplication = () => {
             )}
           </div>
           <div className="detail-field">
-            <strong>Trạng thái:</strong> {shop.status}
+            <strong>Status:</strong> {shop.status}
           </div>
           {isEditing && (
             <button onClick={updateApplicationDetails} className="submit-btn">Save</button>

@@ -10,6 +10,7 @@ import {
 } from './ProfilePage.style';
 import { Button, TextField, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { ApiUpdateAccount, ApiUpdateAvatar } from '../../services/AccountServices';
+import { Snackbar, Alert } from '@mui/material';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -23,6 +24,14 @@ export default function ProfilePage() {
     shopId: '',
     shopName: '',
   });
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [updatedData, setUpdatedData] = useState({
@@ -98,7 +107,8 @@ export default function ProfilePage() {
         fetchProfileData();
         setEditDialogOpen(false);
         setSelectedFile(null);
-        alert("Update Profile Successfully!!!");
+        setMessageAlert("Update Profile Successfully!");
+        setOpenAlert(true);
       } else {
         alert(resultAvatar.message);
       }
@@ -220,6 +230,16 @@ export default function ProfilePage() {
           </DialogActions>
         </Dialog>
       </ProfileCard>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
     </ProfileContainer>
   );
 }

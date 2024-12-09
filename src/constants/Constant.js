@@ -31,7 +31,7 @@ export const HEADER_TOKEN = (token) => {
 /*
  ** GOOGLE API KEY
  */
-export const API_KEY = "AlzaSyGpCG5SrSCk-n1TWzoyTLa1Wt891BhXWBO";
+export const API_KEY = "AlzaSyxfgGw0nbAxVokoKgL4SIcmwknZlvOVwLd";
 export const URL_MAP_AUTOCOMPLETE = "https://maps.gomaps.pro/maps/api/place/autocomplete/json";
 
 /*
@@ -92,6 +92,14 @@ export const USER_STATUS_CLOSED = 4;
 export const API_GET_NOTI_FOR_SHOP = HTTP_SERVER + "/api/Notification/GetNotificationForShop";
 export const API_READ_ALL_NOTI_FOR_SHOP = HTTP_SERVER + "/api/Notification/ReadAllNotificationForShop";
 export const API_COUNT_UNREAD_FOR_SHO = HTTP_SERVER + "/api/Notification/CountNotificationForShop";
+export const API_GET_CATEGORIES_BY_PRODUCT_ID = HTTP_SERVER + "/api/RegisterCategory/GetAllCategorybyProductId";
+
+/*
+ ** API CATEGORY
+ */
+export const API_GET_CATEGORIES = HTTP_SERVER + "/api/Category";
+export const API_REGISTER_PRODUCT_TO_CATEGORY = HTTP_SERVER + "/api/RegisterCategory";
+export const API_REMOVE_PRODUCT_FROM_CATEGORY = HTTP_SERVER + "/api/RegisterCategory";
 
 /*
  ** API USER
@@ -128,6 +136,7 @@ export const API_CHANGE_STOCK_OUT = HTTP_SERVER + "/api/Product/ChangeOutOfStock
 export const AIP_UPDATE_PRODUCT = HTTP_SERVER + "/api/Product/";
 export const AIP_GET_PRODUCT_BY_ID = HTTP_SERVER + "/api/Product/";
 export const AIP_CREATE_PRODUCT = HTTP_SERVER + "/api/Product";
+export const AIP_CREATE_PRODUCT_FOR_STAFF = HTTP_SERVER + "/api/Product/AddProductToStaff";
 export const API_GET_PRODUCTS_BY_SHOP_ID = HTTP_SERVER + "/api/Product/all-product-by-shop-id";
 
 /*

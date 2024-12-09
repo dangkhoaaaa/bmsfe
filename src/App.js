@@ -45,7 +45,8 @@ import PackagePayment from "./pages/ShopPackagePage/PackagePayment.jsx";
 import PackagePaymentReturn from "./pages/PackagePaymentReturn/PackagePaymentReturn.jsx";
 import OrderDetailPage from "./pages/OrderDetailPage/OrderDetailPage.jsx";
 import ShopLocation from "./pages/ShopLocation/ShopLocation.jsx";
-
+import ProductApplication from "./pages/ProductApplication/ProductApplication.js";
+import DetailShopApplication from "./pages/ProductApplication/DetailProductApplication.js";
 function App() {
   return (
     <AuthProvider>
@@ -224,6 +225,15 @@ function App() {
                 />
               }
             />
+               <Route
+              path="/detail-product-application/:id"
+              element={
+                <ProtectedRoute
+                  element={<DetailShopApplication />}
+                  requiredRole={"Staff"}
+                />
+              }
+            />
             <Route
               path="/shop-details/:id"
               element={
@@ -233,6 +243,7 @@ function App() {
                 />
               }
             />
+            
             <Route
               path="/shopOverview"
               element={
@@ -276,11 +287,21 @@ function App() {
                 />
               }
             />
+            
             <Route
               path="/profile"
               element={
                 <ProtectedRoute
                   element={<ProfilePage />}
+                  requiredRole={"Staff"}
+                />
+              }
+            />
+                <Route
+              path="/productApplication"
+              element={
+                <ProtectedRoute
+                  element={<ProductApplication />}
                   requiredRole={"Staff"}
                 />
               }

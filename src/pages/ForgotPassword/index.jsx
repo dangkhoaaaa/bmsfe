@@ -10,6 +10,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import AuthContext from '../../auth/AuthContext';
 import { DIGIT_CODE_EXPIRED } from '../../constants/Constant';
 import { ApiChangePassword, ApiConfirmDigitCode, ApiResetPassword, ApiSendOTP } from '../../services/AuthServices';
+import { Snackbar, Alert } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -41,6 +42,14 @@ export default function ForgotPassword() {
   const startCountdown = () => {
     setCountdown(DIGIT_CODE_EXPIRED);
     setIsCounting(true);
+  };
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
   };
   useEffect(() => {
     if (isCounting && countdown > 0) {
@@ -88,6 +97,11 @@ export default function ForgotPassword() {
       }
       const result = await ApiResetPassword(oldEmail, newPassword.password);
       if (result.ok) {
+        setMessageAlert("Recover password successfully!");
+        setOpenAlert(true);
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
         alert("Recover password successfully!!!");
         navigate('/login');
       } else {
@@ -276,6 +290,16 @@ export default function ForgotPassword() {
             </Typography>
           </Box>
         </Box>
+        <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
       </Box>
     </ThemeProvider>
   );

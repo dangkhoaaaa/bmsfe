@@ -21,8 +21,12 @@ import { StyledPaper } from '../OrderPage/ManageOrders.style';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { QRCodeCanvas } from 'qrcode.react';
+import { io } from 'socket.io-client';
+import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
+import { Snackbar, Alert } from '@mui/material';
 
 const OrderDetailPage = () => {
+  const [socket, setSocket] = useState(null);
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const [order, setOrder] = useState(null);
@@ -34,6 +38,14 @@ const OrderDetailPage = () => {
   const handleCloseQR = () => {
     setOpen(false);
     fetchApiGetOrderById();
+  };
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
   };
 
   const handleStatusChange = (event) => {
@@ -78,6 +90,8 @@ const OrderDetailPage = () => {
     const token = localStorage.getItem('token');
     const result = await ApiChangeOrderStatus(status, orderId, token);
     if (result.ok) {
+      setMessageAlert("Updated order status successfully!");
+      setOpenAlert(true);
       alert("Updated order status successfully!!!");
       fetchApiGetOrderById();
     } else {
@@ -85,14 +99,28 @@ const OrderDetailPage = () => {
     }
   }
 
+  const sendNotiToUser = async (orderId, userId, shopId) => {
+    if (socket) {
+      socket.emit('join-user-topic', userId);
+      const orderData = {
+        userId,
+        shopId,
+        orderId,
+      };
+      socket.emit('new-order', orderData); // Send notification to shop
+    }
+  };
+  
   const fetchApiGetOrderById = async () => {
     if (!orderId) {
       return;
     }
     const result = await ApiGetOrderById(orderId, token);
     if (result.ok) {
-      setOrder(result.body.data);
-      setStatus(result.body.data.status);
+      const orderData = result.body.data;
+      setOrder(orderData);
+      setStatus(orderData.status);
+      sendNotiToUser(orderId, orderData.customerId, orderData.shopId);
     } else {
       alert(result.message);
     }
@@ -100,6 +128,13 @@ const OrderDetailPage = () => {
 
   useEffect(() => {
     fetchApiGetOrderById();
+    const socketConnection = io(HTTP_SOCKET_SERVER);
+    setSocket(socketConnection);
+    return () => {
+      setTimeout(() => {
+        socketConnection.disconnect(); // Delay disconnect by 2 seconds
+      }, 2000); // 2 seconds delay
+    };
   }, [orderId]);
 
   if (!order) return <Typography>Loading...</Typography>;
@@ -227,7 +262,7 @@ const OrderDetailPage = () => {
             >
               Update Status
             </Button>
-            {status != "COMPLETE" && (
+            {order.status != "COMPLETE" && (
               <Button
                 className='ms-2'
                 variant="contained"
@@ -307,6 +342,16 @@ const OrderDetailPage = () => {
           <Typography variant="h6">Total: {formatCurrency(order.totalPrice)}</Typography>
         </Box>
       </Box>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
     </StyledPaper>
   );
 };

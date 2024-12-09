@@ -99,7 +99,7 @@ export default function ShopRegister() {
 
     const newTimeout = setTimeout(() => {
       fetchAddressSuggestions(value);
-    }, 1000);
+    }, 300);
 
     setDebounceTimeout(newTimeout);
   };
@@ -218,7 +218,7 @@ export default function ShopRegister() {
                   getOptionLabel={(option) => option.description || ""}
                   renderOption={(props, option) => (
                     <li {...props}>
-                      {option.description}
+                      {option.description || "No description available"}
                     </li>
                   )}
                   onInputChange={(event, newInputValue) => handleAddressChange(event)}
@@ -236,7 +236,7 @@ export default function ShopRegister() {
                       }}
                     />
                   )}
-                  onChange={(event, newValue) => setSelectedAddress(newValue.description)}
+                  onChange={(event, newValue) => setSelectedAddress(newValue ? newValue.description : "")}
                 />
               </Grid>
               <Grid item xs={12}>

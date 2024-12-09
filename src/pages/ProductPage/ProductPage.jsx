@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import './ProductPage.scss';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Grid, Button, Switch, FormControlLabel } from '@mui/material';
+import { Grid, Button, Switch, FormControlLabel } from '@mui/material';
 import { ApiGetProductsByShopId } from '../../services/ProductServices';
 import AddIcon from '@mui/icons-material/Add'; // Import biểu tượng dấu "+"
+import { Snackbar, Alert } from '@mui/material';
 
 const API = 'https://bms-fs-api.azurewebsites.net/api/Product'; // Base API URL
 
@@ -28,6 +29,14 @@ const ProductPage = () => {
     const [pageSize] = useState(6);
     const [searchTerm, setSearchTerm] = useState('');
     const [showOutOfStock, setShowOutOfStock] = useState(false);
+    const [openAlert, setOpenAlert] = useState(false);
+    const [messageAlert, setMessageAlert] = useState('');
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenAlert(false);
+    };
     const navigate = useNavigate();
 
     const fetchProducts = async () => {
@@ -45,6 +54,12 @@ const ProductPage = () => {
             alert(result.message);
         }
     };
+
+    const onEditSuccess = () => {
+        setMessageAlert('Dish updated successfully!'); // Đặt thông báo
+        setOpenAlert(true); // Mở Snackbar
+        fetchProducts();
+    }
 
     useEffect(() => {
         fetchProducts(); // Fetch products on component mount or when dependencies change
@@ -140,8 +155,9 @@ const ProductPage = () => {
                                     description: product.description,
                                     price: product.price,
                                     imageUrl: product.images?.[0]?.url || '', // Safely check for images
+                                    isOutOfStock: product.isOutOfStock
                                 }}
-                                onEdit={fetchProducts}
+                                onEdit={onEditSuccess}
                                 onDelete={() => handleDeleteProduct(product.id)} // Pass delete handler
                             />
                         </Grid>
@@ -169,6 +185,16 @@ const ProductPage = () => {
                         No Products Found
                     </div>
                 )}
+                <Snackbar
+                open={openAlert}
+                autoHideDuration={3000}
+                onClose={handleCloseAlert}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                    {messageAlert}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

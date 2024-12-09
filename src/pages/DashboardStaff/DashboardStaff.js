@@ -232,7 +232,7 @@ const DashboardStaff = () => {
         <Grid item xs={12} sm={6} md={3}>
           <StatsCard
             title="Total Revenue"
-            value={`${totalRevenue.toLocaleString()}đ`} // Display total revenue in VND
+            value={<span className="total-revenue">{`${totalRevenue.toLocaleString()}`}</span>} // Thêm lớp CSS
             gradient="linear-gradient(135deg, #FFA726 0%, #FB8C00 100%)"
           />
         </Grid>

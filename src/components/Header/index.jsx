@@ -6,10 +6,11 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { ApiCountUnreadForShop, ApiGetNotiForShop, ApiReadAllNotiForShop } from '../../services/NotificationServices';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { io } from 'socket.io-client'; // Import socket.io-client
+import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
 
 dayjs.extend(relativeTime);
+
 export default function Header() {
     const [unreadCount, setUnreadCount] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -23,28 +24,31 @@ export default function Header() {
         setAnchorEl(event.currentTarget);
         await fetchNotiByRole();
     };
-    
+
     useEffect(() => {
         fetchCountNotiByRole();
 
         socket.on('connect', () => {
             console.log('Connected to server with socket ID:', socket.id);
         });
-    
+
         socket.on('disconnect', () => {
             console.log('Disconnected from server');
         });
+
         // Kết nối tới room "shop" theo shopId
         if (decoded.role.includes('Shop')) {
             const shopId = localStorage.getItem('shopId');
             console.log('Emitting join-shop-topic for shopId:', shopId);
             socket.emit('join-shop-topic', shopId);
+
             // Lắng nghe sự kiện thông báo
             socket.on('order-notification', (message) => {
                 fetchCountNotiByRole(); // Cập nhật lại số lượng thông báo chưa đọc
                 fetchNotiByRole(); // Lấy danh sách thông báo mới
             });
         }
+
         return () => {
             socket.disconnect(); // Ngắt kết nối khi component unmount
         };
@@ -56,11 +60,13 @@ export default function Header() {
             await fetchReadAllNotiForShop();
         }
     }
+
     const fetchCountNotiByRole = async () => {
         if (decoded.role.includes('Shop')) {
             await fetchCountNotiForShop();
         }
     }
+
     const fetchReadAllNotiForShop = async () => {
         const shopId = localStorage.getItem('shopId');
         const result = await ApiReadAllNotiForShop(shopId, token);
@@ -68,6 +74,7 @@ export default function Header() {
             alert(result.message);
         }
     }
+
     const fetchNotiForShop = async () => {
         const shopId = localStorage.getItem('shopId');
         const result = await ApiGetNotiForShop(shopId, 1, 10, null, token);
@@ -77,6 +84,7 @@ export default function Header() {
             alert(result.message);
         }
     }
+
     const fetchCountNotiForShop = async () => {
         const shopId = localStorage.getItem('shopId');
         const result = await ApiCountUnreadForShop(shopId, token);
@@ -86,13 +94,16 @@ export default function Header() {
             alert(result.message);
         }
     }
+
     const handleClose = () => {
         setAnchorEl(null);
         setUnreadCount(0); // Reset unread count
     };
+
     const handleItemClick = (id) => {
         navigate(`/shop/orders/detail?orderId=${id}`);
     };
+
     return (
         <div
             className='w-100 bg-success d-flex justify-content-between align-items-center'
