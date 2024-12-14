@@ -24,6 +24,8 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
 import { Snackbar, Alert } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const OrderDetailPage = () => {
   const [socket, setSocket] = useState(null);
@@ -77,7 +79,7 @@ const OrderDetailPage = () => {
             }, 3000);
           }
         } else {
-          alert(result.message);
+          toast.error(result.message);
           clearInterval(intervalId);
         }
       } catch (error) {
@@ -93,10 +95,10 @@ const OrderDetailPage = () => {
     if (result.ok) {
       setMessageAlert("Updated order status successfully!");
       setOpenAlert(true);
-      alert("Updated order status successfully!!!");
+      toast.success("Updated order status successfully!!!");
       fetchApiGetOrderById();
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   }
 
@@ -123,7 +125,7 @@ const OrderDetailPage = () => {
       setStatus(orderData.status);
       sendNotiToUser(orderId, orderData.customerId, orderData.shopId);
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   };
 
@@ -354,6 +356,7 @@ const OrderDetailPage = () => {
           {messageAlert}
         </Alert>
       </Snackbar>
+      <ToastContainer />
     </StyledPaper>
   );
 };

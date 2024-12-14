@@ -11,6 +11,8 @@ import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../auth/AuthContext';
 import { ApiLoginByAccount } from '../../services/AuthServices';
 import { ApiGetProfile } from '../../services/AccountServices';
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for toast notifications
 
 const theme = createTheme({
   palette: {
@@ -37,7 +39,7 @@ export default function Login() {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
     if (!data.email || !data.password) {
-      alert('Please enter both email and password');
+      toast.error('Please enter both email and password');
       return;
     }
     const result = await ApiLoginByAccount(data);
@@ -47,7 +49,7 @@ export default function Login() {
       setUser(decoded);
       navigateAfterLogin(decoded, result.body.data.token);
     } else {
-      alert(result.message);
+      toast.error(result.message); // Replace alert with toast notification
     }
   };
 
@@ -59,7 +61,7 @@ export default function Login() {
     } else if (decoded.role.includes('Shop')) {
       setShopLocalInfo(token);
     } else {
-      alert('Unauthorized role');
+      toast.error('Unauthorized role');
     }
   }
 
@@ -213,6 +215,7 @@ export default function Login() {
           </Box>
         </Box>
       </Box>
+      <ToastContainer /> {/* Add ToastContainer to render toasts */}
     </ThemeProvider>
   );
 }

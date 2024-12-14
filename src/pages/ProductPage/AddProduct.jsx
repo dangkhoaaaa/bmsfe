@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AddProductPage.scss';
 import { ApiCreateProduct, ApiSendProductToStaff } from '../../services/ProductServices';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddProductPage = () => {
     const navigate = useNavigate();
@@ -61,12 +63,11 @@ const AddProductPage = () => {
                 const newCount = prevCount + 1;
                 if (newCount >= 3) {
                     setSendToStaffVisible(true);
-                    alert('You have encountered multiple issues while saving the product. Please send the information to the staff for further assistance.');
-           
+                    toast.error('You have encountered multiple issues while saving the product. Please send the information to the staff for further assistance.');
                 }
                 return newCount;
             });
-            alert(result.message);
+            toast.error(result.message);
         }
     };
 
@@ -113,6 +114,7 @@ const AddProductPage = () => {
 
     return (
         <div className="add-product-page">
+            <ToastContainer />
             <h1 className="form-header">Add New Product</h1>
             {successMessage && <p className="success-message">{successMessage}</p>}
             <form className="add-product-form" onSubmit={handleSubmit}>

@@ -5,6 +5,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { ApiCreateShop } from '../../services/ShopServices';
 import { ApiGetAddressAutoComplete } from '../../services/MapServices';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const theme = createTheme({
   palette: {
@@ -58,24 +60,28 @@ export default function ShopRegister() {
     const result = await ApiCreateShop(data.email, data.name, data.phone, selectedAddress, data.description, data.avatar);
     if (result.ok) {
       setData(emptyUserData);
-      alert("Your shop registration request  successful, the Application has been submitted. Please wait for staff verification.");
+      toast.success('Your shop registration request successful, the Application has been submitted. Please wait for staff verification.');
       navigate('/login');
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   };
 
   const isValidateForm = () => {
+    if (data.name === "" || data.name === "undefined") {
+      toast.error("Please provide a valid name.");
+      return false;
+    }
     if (data.email === "" || data.email === "undefined") {
-      alert("Please provide a valid email address.");
+      toast.error("Please provide a valid email address.");
       return false;
     }
     if (data.phone === "") {
-      alert("Please provide a valid phone.");
+      toast.error("Please provide a valid phone.");
       return false;
     }
     if (selectedAddress === "") {
-      alert("Please provide a valid address.");
+      toast.error("Please provide a valid address.");
       return false;
     }
     return true;
@@ -86,7 +92,7 @@ export default function ShopRegister() {
     if (result.ok) {
       setAddressSuggestions(result.body.predictions);
     } else {
-      alert("Unknow error");
+      toast.error("Invalid field");
     }
   };
 
@@ -297,6 +303,7 @@ export default function ShopRegister() {
           </Box>
         </Box>
       </Box>
+      <ToastContainer />
     </ThemeProvider>
   );
 }

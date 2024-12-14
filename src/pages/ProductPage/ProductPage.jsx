@@ -31,6 +31,7 @@ const ProductPage = () => {
     const [showOutOfStock, setShowOutOfStock] = useState(false);
     const [openAlert, setOpenAlert] = useState(false);
     const [messageAlert, setMessageAlert] = useState('');
+
     const handleCloseAlert = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -86,6 +87,8 @@ const ProductPage = () => {
             }
         }
     };
+
+
 
     const loading = false;
     if (loading) {
@@ -154,7 +157,7 @@ const ProductPage = () => {
                                     name: product.name,
                                     description: product.description,
                                     price: product.price,
-                                    imageUrl: product.images?.[0]?.url || '', // Safely check for images
+                                    imageUrl: product.images || '', // Safely check for images
                                     isOutOfStock: product.isOutOfStock
                                 }}
                                 onEdit={onEditSuccess}
