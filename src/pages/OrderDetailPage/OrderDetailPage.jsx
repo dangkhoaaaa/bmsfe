@@ -360,4 +360,3 @@ const OrderDetailPage = () => {
 };
 
 export default OrderDetailPage;
-item.id
