@@ -64,7 +64,9 @@ export default function ShopRegister() {
     if (result.ok) {
       setData(emptyUserData);
       toast.success('Your shop registration request successful, the Application has been submitted. Please wait for staff verification.');
-      navigate('/login');
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
     } else {
       toast.error(result.message);
     }

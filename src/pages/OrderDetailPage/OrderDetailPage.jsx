@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Toolbar, Card, CardContent, CardMedia, Box, Divider } from '@mui/material';
-import { Select, MenuItem, Button, FormControl, InputLabel } from '@mui/material';
+import {
+  Typography,
+  Toolbar,
+  Card,
+  CardContent,
+  CardMedia,
+  Box,
+  Divider,
+} from '@mui/material';
+import {
+  Select,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
 import { ApiChangeOrderStatus, ApiGetOrderById } from '../../services/OrderServices';
 import { useLocation } from 'react-router-dom';
 import { StyledPaper } from '../OrderPage/ManageOrders.style';
@@ -10,8 +24,6 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
 import { Snackbar, Alert } from '@mui/material';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const OrderDetailPage = () => {
   const [socket, setSocket] = useState(null);
@@ -42,8 +54,6 @@ const OrderDetailPage = () => {
   };
 
   const handleUpdateStatus = () => {
-    setMessageAlert('Order Status updated successfully!'); // Đặt thông báo
-    setOpenAlert(true); // Mở Snackbar
     fetchUpdateOrderStatus();
   };
 
@@ -67,7 +77,7 @@ const OrderDetailPage = () => {
             }, 3000);
           }
         } else {
-          toast.error(result.message);
+          alert(result.message);
           clearInterval(intervalId);
         }
       } catch (error) {
@@ -83,10 +93,9 @@ const OrderDetailPage = () => {
     if (result.ok) {
       setMessageAlert("Updated order status successfully!");
       setOpenAlert(true);
-      toast.success("Updated order status successfully!!!");
       fetchApiGetOrderById();
     } else {
-      toast.error(result.message);
+      alert(result.message);
     }
   }
 
@@ -113,7 +122,7 @@ const OrderDetailPage = () => {
       setStatus(orderData.status);
       sendNotiToUser(orderId, orderData.customerId, orderData.shopId);
     } else {
-      toast.error(result.message);
+      alert(result.message);
     }
   };
 
@@ -121,6 +130,7 @@ const OrderDetailPage = () => {
     fetchApiGetOrderById();
     const socketConnection = io(HTTP_SOCKET_SERVER);
     setSocket(socketConnection);
+
     return () => {
       setTimeout(() => {
         socketConnection.disconnect(); // Delay disconnect by 2 seconds
@@ -233,49 +243,121 @@ const OrderDetailPage = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {shopId && shopId !== "" && ( 
-            
+          {shopId && (
             <Box sx={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
               <FormControl sx={{ minWidth: 200 }}>
                 <InputLabel>Status</InputLabel>
                 <Select value={status} onChange={handleStatusChange} label="Status">
                   <MenuItem value="ORDERED">Ordered</MenuItem>
-                  <MenuItem value="PROCESSING">Processing</MenuItem>
-                  <MenuItem value="SHIPPING">Shipping</MenuItem>
-                  <MenuItem value="DELIVERED">Delivered</MenuItem>
+                  <MenuItem value="CHECKING">Checking</MenuItem>
+                  <MenuItem value="PREPARING">Preparing</MenuItem>
+                  <MenuItem value="PREPARED">Prepared</MenuItem>
+                  
+                  <MenuItem value="CANCEL">Cancel</MenuItem>
+                  <MenuItem value="COMPLETE">Complete</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="contained" onClick={handleUpdateStatus}>Update Status</Button>
-              <Button variant="contained" onClick={handleOpenQR}>Complete Order</Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleUpdateStatus}
+              >
+                Update Status
+              </Button>
+              {order.status != "COMPLETE" && (
+                <Button
+                  className='ms-2'
+                  variant="contained"
+                  color="primary"
+                  onClick={handleOpenQR}
+                >
+                  Show QR
+                </Button>
+              ) || (
+                  <p className='fw-bold text-success pt-3'>This order has been completed</p>
+                )}
+
             </Box>
           )}
         </Box>
 
-        {/* QR Code Modal */}
-        <Modal
-          open={open}
-          onClose={handleCloseQR}
-          aria-labelledby="qr-code-modal-title"
-          aria-describedby="qr-code-modal-description"
-        >
-          <Box sx={{ padding: 4, backgroundColor: 'white', borderRadius: 2, width: 400, margin: 'auto', textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>Scan Order QR Code</Typography>
-            <QRCodeCanvas value={`${orderId}-${shopId}`} size={200} />
-            <Typography sx={{ marginTop: 2, fontSize: 12 }}>Scan this QR code to mark the order as complete</Typography>
-          </Box>
+        <Modal open={open} onClose={handleCloseQR}>
+          {isCompleteScan && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 300,
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+                textAlign: 'center',
+                borderRadius: 2,
+              }}
+            >
+              <CheckCircleOutline sx={{ fontSize: 60, color: 'green', mb: 2 }} />
+              <Typography variant="h6" color="success.main" sx={{ mb: 2 }}>
+                Scan successful!
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCloseQR}
+              >
+                Close
+              </Button>
+            </Box>
+          ) || (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: 300,
+                  bgcolor: 'background.paper',
+                  boxShadow: 24,
+                  p: 4,
+                  textAlign: 'center',
+                  borderRadius: 2,
+                }}
+              >
+                <QRCodeCanvas
+                  value={orderId}
+                  size={200} // Tăng kích thước QR code
+                />
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCloseQR}
+                  sx={{ mt: 2 }}
+                >
+                  Close
+                </Button>
+              </Box>
+            )}
         </Modal>
 
-        {/* Snackbar for alerts */}
-        <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert}>
-          <Alert onClose={handleCloseAlert} severity="success">
-            {messageAlert}
-          </Alert>
-        </Snackbar>
+        {/* Total Price */}
+        <Box sx={{ marginTop: 2, textAlign: 'right' }}>
+          <Typography variant="h6">Total: {formatCurrency(order.totalPrice)}</Typography>
+        </Box>
       </Box>
-
-      <ToastContainer />
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+          {messageAlert}
+        </Alert>
+      </Snackbar>
     </StyledPaper>
   );
-}
+};
 
 export default OrderDetailPage;
+item.id
