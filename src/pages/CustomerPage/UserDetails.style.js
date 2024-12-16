@@ -17,7 +17,7 @@ export const CustomTableRow = styled(TableRow)`
 `;
 
 export const ActionButton = styled(Button)`
-  margin: 0 5px;
+  margin: 0 0px;
   display: inline-flex;
   align-items: center;
 `;

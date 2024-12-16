@@ -2,25 +2,11 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import './ProductPage.scss';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Button, Switch, FormControlLabel } from '@mui/material';
+import { Grid, Button, Switch, FormControlLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { ApiGetProductsByShopId } from '../../services/ProductServices';
-import AddIcon from '@mui/icons-material/Add'; // Import biểu tượng dấu "+"
-import { Snackbar, Alert } from '@mui/material';
 
-const API = 'https://bms-fs-api.azurewebsites.net/api/Product'; // Base API URL
-
-// Function to get products
-const getProducts = async (shopId, searchTerm, pageIndex, pageSize) => {
-    const url = `${API}/all-product-by-shop-id?id=${shopId}&search=${searchTerm}&isDesc=true&pageIndex=${pageIndex}&pageSize=${pageSize}`;
-    const response = await fetch(url, { method: 'GET' });
-
-    if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText);
-    }
-
-    const data = await response.json();
-    return data; // No need to access `.data` here
-};
+const API = 'https://bms-fs-api.azurewebsites.net/api/Product';
 
 const ProductPage = () => {
     const [products, setProducts] = useState([]);
@@ -31,13 +17,9 @@ const ProductPage = () => {
     const [showOutOfStock, setShowOutOfStock] = useState(false);
     const [openAlert, setOpenAlert] = useState(false);
     const [messageAlert, setMessageAlert] = useState('');
+    const [openDialog, setOpenDialog] = useState(false);
+    const [deleteProductId, setDeleteProductId] = useState(null);
 
-    const handleCloseAlert = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenAlert(false);
-    };
     const navigate = useNavigate();
 
     const fetchProducts = async () => {
@@ -56,44 +38,48 @@ const ProductPage = () => {
         }
     };
 
+    const handleDeleteProduct = async () => {
+        if (!deleteProductId) return;
+        try {
+            await fetch(`${API}/${deleteProductId}`, { method: 'DELETE' });
+            setMessageAlert('Dish Deleted');
+            setOpenAlert(true);
+            setOpenDialog(false);
+            fetchProducts(); // Re-fetch products after deletion
+        } catch (error) {
+            console.error('Error deleting product:', error);
+        }
+    };
+
     const onEditSuccess = () => {
-        setMessageAlert('Dish updated successfully!'); // Đặt thông báo
-        setOpenAlert(true); // Mở Snackbar
+        setMessageAlert('Dish updated successfully!');
+        setOpenAlert(true);
         fetchProducts();
-    }
+    };
 
     useEffect(() => {
-        fetchProducts(); // Fetch products on component mount or when dependencies change
-    }, [pageIndex, searchTerm, showOutOfStock]); // Re-fetch products when pageIndex or search term changes
+        fetchProducts();
+    }, [pageIndex, searchTerm, showOutOfStock]);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
-            setPageIndex(newPage); // Update the page index
+            setPageIndex(newPage);
         }
     };
 
     const handleAddProduct = () => {
-        navigate('/shop/add-product'); // Navigate to add product page
+        navigate('/shop/add-product');
     };
 
-    const handleDeleteProduct = async (productId) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this product?');
-        if (confirmDelete) {
-            try {
-                await fetch(`${API}/${productId}`, { method: 'DELETE' });
-                fetchProducts(); // Re-fetch products after deletion
-            } catch (error) {
-                console.error('Error deleting product:', error);
-            }
-        }
+    const handleOpenDialog = (productId) => {
+        setDeleteProductId(productId);
+        setOpenDialog(true);
     };
 
-
-
-    const loading = false;
-    if (loading) {
-        return <div>Loading...</div>; // Show a loading message while fetching user data
-    }
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setDeleteProductId(null);
+    };
 
     return (
         <div className="product-page">
@@ -149,7 +135,7 @@ const ProductPage = () => {
             </div>
             <Grid container spacing={2}>
                 {products.map((product) => (
-                    product.isOutOfStock == showOutOfStock && (
+                    product.isOutOfStock === showOutOfStock && (
                         <Grid item xs={6} sm={6} md={6} lg={4} xl={2} key={product.id}>
                             <ProductCard
                                 product={{
@@ -161,7 +147,7 @@ const ProductPage = () => {
                                     isOutOfStock: product.isOutOfStock
                                 }}
                                 onEdit={onEditSuccess}
-                                onDelete={() => handleDeleteProduct(product.id)} // Pass delete handler
+                                onDelete={() => handleOpenDialog(product.id)} // Open dialog on delete
                             />
                         </Grid>
                     )
@@ -184,20 +170,41 @@ const ProductPage = () => {
                     </button>
                 </div>
             ) || (
-                    <div className="text-center mt-4" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#555' }}>
-                        No Products Found
-                    </div>
-                )}
-                <Snackbar
+                <div className="text-center mt-4" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#555' }}>
+                    No Products Found
+                </div>
+            )}
+            <Snackbar
                 open={openAlert}
-                autoHideDuration={3000}
-                onClose={handleCloseAlert}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                autoHideDuration={2000}
+                onClose={() => setOpenAlert(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
-                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                <Alert onClose={() => setOpenAlert(false)} severity="success" sx={{ width: '100%' }}>
                     {messageAlert}
                 </Alert>
             </Snackbar>
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete this product?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        No
+                    </Button>
+                    <Button onClick={handleDeleteProduct} color="primary" autoFocus>
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

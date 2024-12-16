@@ -60,7 +60,6 @@ const Sidebar = () => {
     sidebarItems = [
       { text: "DashboardStaff", icon: <PortraitIcon />, path: "/dashboardStaff" },
       { text: "ShopOverview", icon: <FaCog />, path: "/shopOverview" },
-      { text: "Notification", icon: <FaHome />, path: "/notificationManagement" },
       { text: "Category", icon: <FaListAlt />, path: "/category" },
       { text: "Feedback", icon: <FaComments />, path: "/feedback" },
       {
@@ -138,7 +137,7 @@ const Sidebar = () => {
         <Typography
           variant="h6"
           sx={{ flexGrow: 1 }}
-          onClick={() => navigate("/")}
+        
           style={{ cursor: "pointer" }}
         >
           {user?.role || "User"} {/* Dynamically display the role */}

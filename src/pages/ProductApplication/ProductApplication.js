@@ -107,7 +107,7 @@ const ProductApplication = () => {
                   </div>
                 </td>
                 <td>{product.description}</td>
-                <td>${product.price.toFixed(2)}</td>
+                <td>{product.price.toFixed(2)} VND</td>
                 <td>{product.isOutOfStock ? "Out of Stock" : "Available"}</td>
                 <td>
                   <button  className="details-btn" onClick={() => viewProductDetails(product.id)}>View Details</button>

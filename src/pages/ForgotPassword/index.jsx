@@ -177,7 +177,7 @@ export default function ForgotPassword() {
                 <TextField
                   value={oldEmail}
                   variant="outlined"
-                  placeholder="Enter your email"
+                  placeholder="Enter your email *"
                   name="email"
                   type={'email'}
                   required
@@ -292,9 +292,9 @@ export default function ForgotPassword() {
         </Box>
         <Snackbar
         open={openAlert}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
           {messageAlert}

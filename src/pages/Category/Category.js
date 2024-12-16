@@ -51,8 +51,9 @@ const CRUDCategory = () => {
     setDebounceTimeout(newTimeout);
   };
 
-  const handleEdit = (id) => {
-    navigate(`/edit-category/${id}`);
+  const handleEdit = (category) => {
+    const { id, name, description } = category;
+    navigate(`/edit-category/${id}/${encodeURIComponent(name)}/${encodeURIComponent(description)}`);
   };
 
   const handleDelete = async (id) => {
@@ -132,7 +133,7 @@ const CRUDCategory = () => {
                     <div className="action-buttons">
                       <button
                         className="edit-button"
-                        onClick={() => handleEdit(category.id)}
+                        onClick={() => handleEdit(category)}
                       >
                         ✏️
                       </button>

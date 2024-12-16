@@ -10,6 +10,8 @@ import { ApiGetShopById, ApiUpdateShop } from '../../services/ShopServices';
 import { useNavigate } from 'react-router-dom';
 import { ApiGetAddressAutoComplete } from '../../services/MapServices';
 import { Snackbar, Alert } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ShopProfile() {
   const navigate = useNavigate();
@@ -36,12 +38,22 @@ export default function ShopProfile() {
     if (result.ok) {
       setAddressSuggestions(result.body.predictions);
     } else {
-      alert("Unknow error");
+      toast.error("Unknow error");
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Validate phone number for 9-11 digits
+    if (name === "phone") {
+      const phoneRegex = /^[0-9]{9,11}$/; // Regex for 9 to 11 digits
+      if (!phoneRegex.test(value) && value !== "") {
+        toast.error("Phone number must be 9 to 11 digits and cannot contain letters.");
+        return; // Prevent updating the state if validation fails
+      }
+    }
+
     setShopUpdate({
       ...shopUpdate,
       [name]: value,
@@ -77,7 +89,7 @@ export default function ShopProfile() {
     const shopId = localStorage.getItem('shopId');
     const token = localStorage.getItem('token');
     if (!shopId) {
-      alert('ShopId is not found');
+      toast.error('ShopId is not found');
       navigate('/login'); // Navigate to add product page
       return;
     }
@@ -88,7 +100,7 @@ export default function ShopProfile() {
       setRoundedRate(Math.round(result.body.data.rate))
       setTitleAddress(result.body.data.address);
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   };
 
@@ -129,7 +141,7 @@ export default function ShopProfile() {
       fetchProfileShopData();
       handleCloseEditDialog();
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   };
 
@@ -283,14 +295,15 @@ export default function ShopProfile() {
         </Dialog>
         <Snackbar
           open={openAlert}
-          autoHideDuration={3000}
+          autoHideDuration={2000}
           onClose={handleCloseAlert}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
             {messageAlert}
           </Alert>
         </Snackbar>
+        <ToastContainer />
       </ProfileCard>
     </ProfileContainer>
   );

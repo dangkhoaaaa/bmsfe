@@ -28,7 +28,7 @@ const AddressField = () => {
             required
             fullWidth
             id="address"
-            label="Chọn địa chỉ"
+            label="input address"
             autoFocus
             value={address}
             onChange={(e) => setAddress(e.target.value)}

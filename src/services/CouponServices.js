@@ -1,6 +1,6 @@
 import * as Constant from "../constants/Constant"
 
-export const ApiCreateCoupon = async (name, percentDiscount, isPercentDiscount, maxDiscount, minPrice, minDiscount, shopId, token) => {
+export const ApiCreateCoupon = async (name, percentDiscount, isPercentDiscount, maxDiscount, minPrice, minDiscount, shopId, startDate, endDate, token) => {
     const response = await fetch(`${Constant.API_CREATE_COUPON}`, {
         method: "POST",
         headers: Constant.HTTP_HEADER_TOKEN(token),
@@ -11,13 +11,15 @@ export const ApiCreateCoupon = async (name, percentDiscount, isPercentDiscount, 
             isPercentDiscount,
             maxDiscount: parseInt(maxDiscount),
             minPrice: parseInt(minPrice),
-            minDiscount: parseInt(minDiscount)
+            minDiscount: parseInt(minDiscount),
+            startDate,
+            endDate
         })
     });
     return Constant.ResponseData(response);
 }
 
-export const ApiUpdateCoupon = async (name, percentDiscount, isPercentDiscount, maxDiscount, minPrice, minDiscount, couponId, token) => {
+export const ApiUpdateCoupon = async (name, percentDiscount, isPercentDiscount, maxDiscount, minPrice, minDiscount, couponId, startDate, endDate, token) => {
     const response = await fetch(`${Constant.API_UPDATE_COUPON + couponId}`, {
         method: "PUT",
         headers: Constant.HTTP_HEADER_TOKEN(token),
@@ -27,7 +29,9 @@ export const ApiUpdateCoupon = async (name, percentDiscount, isPercentDiscount, 
             isPercentDiscount,
             maxDiscount: parseInt(maxDiscount),
             minPrice: parseInt(minPrice),
-            minDiscount: parseInt(minDiscount)
+            minDiscount: parseInt(minDiscount),
+            startDate,
+            endDate
         })
     });
     return Constant.ResponseData(response);

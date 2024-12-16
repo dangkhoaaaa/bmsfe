@@ -95,7 +95,7 @@ function App() {
           <Route element={<MainLayout />} path="/shop">
             <Route
               path="/shop"
-              element={<ProtectedRoute element={<ShopPage />} requiredRole={"Shop"} />}
+              element={<ProtectedRoute element={<ShopPackagePage />} requiredRole={"Shop"} />}
             />
             <Route
               path="/shop/package"
@@ -190,7 +190,7 @@ function App() {
               }
             />
             <Route
-              path="/edit-category/:id"
+              path="/edit-category/:id/:name/:description"
               element={
                 <ProtectedRoute
                   element={<EditCategory />}

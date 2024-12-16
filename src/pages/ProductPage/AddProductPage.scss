@@ -27,7 +27,6 @@
 
         .form-group {
             margin-bottom: 15px;
-            margin-right: 15px;
 
             label {
                 display: block;
@@ -46,26 +45,44 @@
                 transition: border-color 0.3s;
 
                 &:focus {
-                    border-color: #007bff; /* Blue border on focus */
-                    outline: none; /* Remove default outline */
-                }
-
-                &:hover {
-                    border-color: #007bff; /* Blue border on hover */
+                    border-color: #007bff;
+                    outline: none;
                 }
             }
 
             textarea {
-                resize: vertical; /* Allow vertical resizing */
-                height: 100px; /* Set a default height */
+                resize: vertical;
+                height: 100px;
             }
 
             .error {
                 color: red;
                 font-size: 14px;
                 margin-top: 5px;
-                transition: opacity 0.3s;
-                opacity: 1; /* Ensure error message is visible */
+            }
+        }
+
+        .image-preview {
+            margin-top: 10px;
+
+            .image-item {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 5px;
+
+                button {
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #c82333;
+                    }
+                }
             }
         }
 
@@ -82,20 +99,20 @@
                 transition: background-color 0.3s;
 
                 &.submit-button {
-                    background-color: #007bff; /* Blue background */
+                    background-color: #007bff;
                     color: white;
 
                     &:hover {
-                        background-color: #0056b3; /* Darker blue on hover */
+                        background-color: #0056b3;
                     }
                 }
 
                 &.cancel-button {
-                    background-color: #dc3545; /* Red background */
+                    background-color: #dc3545;
                     color: white;
 
                     &:hover {
-                        background-color: #c82333; /* Darker red on hover */
+                        background-color: #c82333;
                     }
                 }
             }

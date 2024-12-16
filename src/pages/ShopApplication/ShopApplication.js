@@ -141,7 +141,7 @@ const ShopApplication = () => {
                   </div>
                 </td>
                 <td>{shop.description}</td>
-                <td>{shop.rate} / 5</td>
+                <td>{Math.round(shop.rate)} / 5</td>
                 <td>
                   <button
                     className="details-btn"

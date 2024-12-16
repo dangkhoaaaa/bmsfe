@@ -20,11 +20,13 @@
 }
 
 .staff-table-container {
-  margin-top: 20px;
+  .MuiPaper-root {
+    box-shadow: none;
+  }
 
   .pagination {
-    margin-top: 20px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
+    margin-top: 20px;
   }
 }

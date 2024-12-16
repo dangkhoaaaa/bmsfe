@@ -17,11 +17,12 @@ const FeedbackPage = () => {
   // Lấy dữ liệu feedback từ API dựa theo shopId
   const fetchFeedbackData = async (filter, pageIndex, pageSize) => {
     const shopId = localStorage.getItem('shopId'); // Lấy shopId từ local storage
-    if (!shopId) {
-        setError('Shop ID is not available.');
-        setLoading(false);
-        return;
-    }
+    // console.log ("hi1");
+    // if (!shopId) {
+    //     setError('Shop ID is not available.');
+    //     setLoading(false);
+    //     return;
+    // }
 
     setLoading(true);
     try {
@@ -29,14 +30,16 @@ const FeedbackPage = () => {
         if (filter !== "All") {
             url += `&rate=${filter}`;
         }
-
+        console.log ("hi1");
       const response = await axios.get(url);
+            console.log ("fb ne"+response.data.data.data );
             const feedback = response.data.data.data || [];
             setFeedbackData(feedback);
             setTotalFeedback(response.data.data.total || 0); // Cập nhật tổng số feedback
             setLoading(false);
         } catch (err) {
             setError(err);
+            console.log (err +"hi");
             setLoading(false);
         }
     };

@@ -21,16 +21,13 @@ const AddProductPage = () => {
         const storedShopId = localStorage.getItem('shopId');
         if (storedShopId) {
             setShopId(storedShopId);
-            console.log('Shop ID:', storedShopId);
         } else {
             alert('No shop ID found. Please log in as a shop.');
             navigate('/login');
         }
     }, [navigate]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('token');
+    const validateFields = () => {
         const validationErrors = {};
         if (!name) validationErrors.name = 'Product name is required';
         if (!price) {
@@ -39,10 +36,16 @@ const AddProductPage = () => {
             validationErrors.price = 'Price must be greater than 0';
         }
         if (!description) validationErrors.description = 'Description is required';
-        if (images.length === 0) validationErrors.image = 'At least one product image is required';
+        if (images.length === 0) validationErrors.images = 'At least one product image is required';
+        setErrors(validationErrors);
+        return Object.keys(validationErrors).length === 0;
+    };
 
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('token');
+
+        if (!validateFields()) {
             return;
         }
 
@@ -100,7 +103,7 @@ const AddProductPage = () => {
     };
 
     const handleCancel = () => {
-        navigate('/Menu');
+        navigate('/shop/menu');
     };
 
     const handleImageChange = (e) => {
@@ -109,7 +112,7 @@ const AddProductPage = () => {
     };
 
     const handleRemoveImage = (index) => {
-        setImages(images.filter((_, i) => i !== index)); // Remove selected image
+        setImages(images.filter((_, i) => i !== index));
     };
 
     return (
@@ -127,7 +130,7 @@ const AddProductPage = () => {
                         value={name}
                         onChange={(e) => setProductName(e.target.value)}
                     />
-                    {errors.name && <div className="error-tooltip">{errors.name}</div>}
+                    {errors.name && <div className="error">{errors.name}</div>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="price">Price *</label>
@@ -138,7 +141,7 @@ const AddProductPage = () => {
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                     />
-                    {errors.price && <div className="error-tooltip">{errors.price}</div>}
+                    {errors.price && <div className="error">{errors.price}</div>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="description">Description *</label>
@@ -148,7 +151,7 @@ const AddProductPage = () => {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
-                    {errors.description && <div className="error-tooltip">{errors.description}</div>}
+                    {errors.description && <div className="error">{errors.description}</div>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="images">Product Images *</label>
@@ -156,10 +159,10 @@ const AddProductPage = () => {
                         type="file"
                         id="images"
                         accept="image/*"
-                        multiple // Allow multiple file selection
+                        multiple
                         onChange={handleImageChange}
                     />
-                    {errors.image && <div className="error-tooltip">{errors.image}</div>}
+                    {errors.images && <div className="error">{errors.images}</div>}
                     <div className="image-preview">
                         {images.map((image, index) => (
                             <div key={index} className="image-item">

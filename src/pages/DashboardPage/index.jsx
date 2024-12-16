@@ -90,7 +90,7 @@ const Dashboard = () => {
           {/* Top Users Card */}
           <div className="col-6">
             <Typography variant="h4" sx={{ mb: 2 }}>
-              Top 5 Users by Purchases
+              Top 5 Users by Purchases this Month
             </Typography>
             {userTop5Purchased && userTop5Purchased.map((user) => (
               <TopUserCard key={user.id} user={user} />

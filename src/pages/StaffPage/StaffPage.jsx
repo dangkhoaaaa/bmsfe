@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Pagination, 
-  Dialog, DialogTitle, DialogContent, DialogActions, Grid, Avatar, Typography, InputAdornment } from '@mui/material';
+import {
+  TextField, TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Pagination, PaginationItem,
+  Dialog, DialogTitle, DialogContent, DialogActions, Grid, Avatar, Typography, InputAdornment
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import './StaffPage.scss'; 
 import axios from 'axios';
@@ -15,10 +17,11 @@ const StaffPage = () => {
     email: '',
   });
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize] = useState(8);
+  const [pageSize] = useState(5); // Adjust the page size as needed
   const [totalCount, setTotalCount] = useState(0);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [staffToDelete, setStaffToDelete] = useState(null);
+  const [isLastPage, setIsLastPage] = useState(false);
 
   // Fetch staff data based on search term and pagination
   const fetchStaff = async () => {
@@ -34,9 +37,9 @@ const StaffPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Response data:", response.data); // Log the response data
-      setStaff(response.data.data.data); 
-      setTotalCount(response.data.totalCount); 
+      setStaff(response.data.data.data);
+      setTotalCount(response.data.data.totalCount);
+      setIsLastPage(response.data.data.isLastPage);
     } catch (error) {
       console.error('Error fetching staff:', error);
       alert("Failed to fetch staff data. Please check your API.");
@@ -157,7 +160,7 @@ const StaffPage = () => {
                 <TableCell>Email</TableCell>
                 <TableCell>Phone</TableCell>
                 <TableCell>Create Date</TableCell>
-                <TableCell>Role</TableCell>
+
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -173,7 +176,7 @@ const StaffPage = () => {
                     <TableCell>{staffMember.email}</TableCell>
                     <TableCell>{staffMember.phone || 'N/A'}</TableCell>
                     <TableCell>{new Date(staffMember.createDate).toLocaleDateString()}</TableCell>
-                    <TableCell>{staffMember.role || 'N/A'}</TableCell>
+
                     <TableCell>
                       <Button
                         variant="contained"
@@ -203,6 +206,17 @@ const StaffPage = () => {
           onChange={(event, value) => setPageIndex(value)} 
           color="primary"
           className="pagination"
+          renderItem={(item) => {
+            if (item.type === "next") {
+              return (
+                <PaginationItem
+                  {...item}
+                  disabled={isLastPage} // Disable nút "Next" nếu là trang cuối
+                />
+              );
+            }
+            return <PaginationItem {...item} />;
+          }}
         />
       </div>
 

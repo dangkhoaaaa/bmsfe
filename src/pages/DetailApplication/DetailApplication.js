@@ -18,6 +18,7 @@ const DetailApplication = () => {
   const [lat, setLat] = useState(shop ? shop.lat : "");
   const [lng, setLng] = useState(shop ? shop.lng : "");
   const [image, setImage] = useState(null);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -53,6 +54,7 @@ const DetailApplication = () => {
       const formData = new FormData();
       formData.append('id', id);
       formData.append('status', status);
+      formData.append('message', message);
 
       const response = await axios.put(
         'https://bms-fs-api.azurewebsites.net/api/ShopApplication',
@@ -192,8 +194,15 @@ const DetailApplication = () => {
           {isEditing && (
             <button onClick={updateApplicationDetails} className="submit-btn">Save</button>
           )}
+                  <div className="detail-field">
+                <strong>Message:</strong>
+                <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+            </div>
           <button onClick={() => updateShopStatus('ACCEPTED')} className="accept-btn">Accept</button>
           <button onClick={() => updateShopStatus('DENIED')} className="deny-btn">Deny</button>
+        
+    
+         
         </div>
       </div>
 

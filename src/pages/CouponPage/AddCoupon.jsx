@@ -13,11 +13,13 @@ const AddCouponPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
 
      // State cho các trường trong form
-    const [percentDiscount, setPercentDiscount] = useState('');
+    const [percentDiscount, setPercentDiscount] = useState(0);
     const [isPercentDiscount, setIsPercentDiscount] = useState(false);
     const [maxDiscount, setMaxDiscount] = useState('');
-    const [minPrice, setMinPrice] = useState('');
+    const [minPrice, setMinPrice] = useState(0);
     const [minDiscount, setMinDiscount] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     useEffect(() => {
         const storedShopId = localStorage.getItem('shopId');
@@ -34,16 +36,16 @@ const AddCouponPage = () => {
         e.preventDefault();
         const newErrors = {};
         if (!name) newErrors.name = 'Coupon Name is required';
-        if (!percentDiscount) newErrors.percentDiscount = 'Percent Discount is required';
+       // if (!percentDiscount) newErrors.percentDiscount = 'Percent Discount is required';
         if (!maxDiscount) newErrors.maxDiscount = 'Max Discount is required';
-        if (!minPrice) newErrors.minPrice = 'Min Price is required';
+        //if (!minPrice) newErrors.minPrice = 'Min Price is required';
         if (!minDiscount) newErrors.minDiscount = 'Min Discount is required';
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         }
-        const result = await ApiCreateCoupon(name, percentDiscount, isPercentDiscount, maxDiscount, minPrice, minDiscount, shopId);
+        const result = await ApiCreateCoupon(name, percentDiscount, isPercentDiscount, maxDiscount, minPrice, minDiscount, shopId, startDate, endDate);
         if (result.ok) {
             setSuccessMessage('Coupon added successfully!');
             setTimeout(() => {
@@ -87,19 +89,46 @@ const AddCouponPage = () => {
 
                     {/* Percent Discount */}
                     <Box display="flex" alignItems="flex-start">
-                        <TextField
-                            label="Percent Discount *"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            type="number"
-                            placeholder="Enter percent discount"
-                            value={percentDiscount}
-                            onChange={(e) => setPercentDiscount(e.target.value)}
-                            error={Boolean(errors.percentDiscount)}
-                            helperText={errors.percentDiscount}
+                        <FormControlLabel
+                            control={
+                                <input
+                                    type='checkbox'
+                                    className='form-check-input ms-2 mt-3'
+                                    style={{ width: 50, height: 56 }}
+                                    onChange={(e) => setIsPercentDiscount(e.target.checked)}
+                                />
+                            }
+                            label="%"
                         />
-                        <input type='checkbox' className='form-check-input ms-2 mt-3' style={{width:50,height:56}} onChange={(e)=>setIsPercentDiscount(e.target.checked)}/>
+
+                        {isPercentDiscount ? (
+                            <TextField
+                                label="Percent Discount *"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                type="number"
+                                placeholder="Enter percent discount"
+                                value={percentDiscount}
+                                onChange={(e) => setPercentDiscount(e.target.value ? Number(e.target.value) : 0)}
+                                error={Boolean(errors.percentDiscount)}
+                                helperText={errors.percentDiscount}
+                                inputProps={{ min: 0, max: 100 }}
+                            />
+                        ) : (
+                            <TextField
+                                label="Price *"
+                                variant="outlined"
+                                fullWidth
+                                margin="normal"
+                                type="number"
+                                placeholder="Enter price"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : 0)}
+                                error={Boolean(errors.minPrice)}
+                                helperText={errors.minPrice}
+                            />
+                        )}
                     </Box>
 
                     {/* Max Discount */}
@@ -116,19 +145,19 @@ const AddCouponPage = () => {
                         helperText={errors.maxDiscount}
                     />
 
-                    {/* Min Price */}
+                    {/* Min Price
                     <TextField
-                        label="Min Price *"
+                        label="Price *"
                         variant="outlined"
                         fullWidth
                         margin="normal"
                         type="number"
-                        placeholder="Enter min price"
+                        placeholder="Enter price"
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
                         error={Boolean(errors.minPrice)}
                         helperText={errors.minPrice}
-                    />
+                    /> */}
 
                     {/* Min Discount */}
                     <TextField
@@ -142,6 +171,26 @@ const AddCouponPage = () => {
                         onChange={(e) => setMinDiscount(e.target.value)}
                         error={Boolean(errors.minDiscount)}
                         helperText={errors.minDiscount}
+                    />
+
+                    {/* Start Date */}
+                    <Typography variant="body1" sx={{ marginTop: 2 }}>Start Date</Typography>
+                    <TextField
+                        type="datetime-local"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        variant="outlined"
+                        sx={{ marginTop: 1 }}
+                    />
+
+                    {/* End Date */}
+                    <Typography variant="body1" sx={{ marginTop: 2 }}>End Date</Typography>
+                    <TextField
+                        type="datetime-local"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        variant="outlined"
+                        sx={{ marginTop: 1 }}
                     />
 
                     {/* Form Actions */}

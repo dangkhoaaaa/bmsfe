@@ -20,7 +20,7 @@ const FeedbackShop = () => {
         const token = localStorage.getItem('token');
         if (!shopId) {
             alert('ShopId is not found');
-            navigate('/login'); // Navigate to add product page
+            navigate('/login'); // Navigate to login page
             return;
         }
         const result = await ApiGetShopById(shopId, token);

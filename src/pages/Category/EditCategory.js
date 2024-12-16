@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditCategory = () => {
   const { id } = useParams(); // Extract ID from the URL
@@ -80,7 +82,7 @@ const EditCategory = () => {
       );
 
       if (response.data.isSuccess) {
-        alert("Category updated successfully!");
+        toast.success("Category updated successfully!");
         navigate("/category"); // Redirect to the category list
       } else {
         setError(
@@ -138,6 +140,7 @@ const EditCategory = () => {
           Update Category
         </button>
       </form>
+      <ToastContainer />
       <style>{`
         .edit-category-container {
           max-width: 600px;

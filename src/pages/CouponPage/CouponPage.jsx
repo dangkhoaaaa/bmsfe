@@ -35,7 +35,7 @@ const CouponPage = () => {
     if (shopId) {
       try {
         const response = await axios.get(
-          'https://bms-fs-api.azurewebsites.net/api/Coupon/get-all-coupon-for-shop',
+          'https://bms-fs-api.azurewebsites.net/api/Coupon/GetAllCouponForShopInWeb',
           {
             params: {
               shopId: shopId,
@@ -116,7 +116,7 @@ const CouponPage = () => {
               <th>End Date</th>
               <th>Discount (%)</th>
               <th>Max Discount</th>
-              <th>Min Price</th>
+              <th>Price</th>
               <th>Min Discount</th>
               <th>Actions</th>
             </tr>

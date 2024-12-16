@@ -87,7 +87,7 @@ const Feedback = () => {
               <th>Feedback</th>
               <th>Rate</th>
               <th>Date</th>
-              <th>Actions</th>
+           
             </tr>
           </thead>
           <tbody>
@@ -118,14 +118,7 @@ const Feedback = () => {
                   <span className="rate-status">{feedback.rate} / 5</span>
                 </td>
                 <td>{new Date(feedback.createDate).toLocaleDateString()}</td>
-                <td>
-                  <button
-                    className="block-btn"
-                    onClick={() => handleBlock(feedback.id)}
-                  >
-                    <i className="fas fa-ban" title="Block"></i>
-                  </button>
-                </td>
+          
               </tr>
             ))}
           </tbody>

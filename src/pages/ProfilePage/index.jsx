@@ -11,6 +11,8 @@ import {
 import { Button, TextField, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { ApiUpdateAccount, ApiUpdateAvatar } from '../../services/AccountServices';
 import { Snackbar, Alert } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -24,6 +26,7 @@ export default function ProfilePage() {
     shopId: '',
     shopName: '',
   });
+
   const [openAlert, setOpenAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
   const handleCloseAlert = (event, reason) => {
@@ -67,7 +70,9 @@ export default function ProfilePage() {
           shopId: data.data.shopId,
           shopName: data.data.shopName,
         });
-        localStorage.setItem ("shopId",data.data.shopId );
+        if (data.data.shopId !== null) {
+          localStorage.setItem("shopId", data.data.shopId);
+        }
         localStorage.setItem("shopName", data.data.shopName);
       } else {
         console.error('Failed to fetch profile data');
@@ -108,57 +113,13 @@ export default function ProfilePage() {
         setEditDialogOpen(false);
         setSelectedFile(null);
         setMessageAlert("Update Profile Successfully!");
-        setOpenAlert(true);
+        toast.success(messageAlert);
       } else {
-        alert(resultAvatar.message);
+        toast.error(resultAvatar.message);
       }
     } else {
-      alert(resultAccount.message);
+      toast.error(resultAccount.message);
     }
-    // try {
-    //   // Create a FormData object
-    //   const formData = new FormData();
-    //   formData.append('firstName', updatedData.firstName);
-    //   formData.append('lastName', updatedData.lastName);
-    //   formData.append('phone', updatedData.phone);
-    //   // Append selected file if it exists
-    //   if (selectedFile) {
-    //     formData.append('avatar', selectedFile); // Append selected file
-    //   }
-    //   const response = await fetch('https://bms-fs-api.azurewebsites.net/api/Account', {
-    //     method: 'PUT',
-    //     headers: {
-    //       'Authorization': `Bearer ${token}`,
-    //     },
-    //     body: formData,
-    //   });
-    //   if (response.ok) {
-    //     const updatedProfile = await response.json();
-    //     if (updatedProfile && updatedProfile.data) {
-    //       setUserData(updatedProfile.data); // Update the state with the returned updated data
-    //       setEditDialogOpen(false);
-    //       setSelectedFile(null); // Reset selected file after successful update
-    //     }
-    //   } else {
-    //     let errorMessage = 'Failed to update profile';
-    //     try {
-    //       const errorResponse = await response.json();
-    //       errorMessage = errorResponse.message || errorMessage; // Log specific error message
-    //       console.error('Error response:', errorResponse); // Log the entire error response for debugging
-    //     } catch (e) {
-    //       console.error('Error parsing error response:', e);
-    //     }
-    //     console.error(errorMessage);
-    //     alert(`Error: ${errorMessage}`);
-    //   }
-    // } catch (error) {
-    //   if (error instanceof TypeError) {
-    //     alert('Network error: Please check your internet connection.');
-    //   } else {
-    //     console.error('Network or other error:', error);
-    //     alert(`Error: ${error.message}`);
-    //   }
-    // }
   };
 
   return (
@@ -196,21 +157,21 @@ export default function ProfilePage() {
             <TextField
               autoFocus
               margin="dense"
-              label="First Name"
+              label="First Name *"
               fullWidth
               value={updatedData.firstName}
               onChange={(e) => setUpdatedData({ ...updatedData, firstName: e.target.value })}
             />
             <TextField
               margin="dense"
-              label="Last Name"
+              label="Last Name *"
               fullWidth
               value={updatedData.lastName}
               onChange={(e) => setUpdatedData({ ...updatedData, lastName: e.target.value })}
             />
             <TextField
               margin="dense"
-              label="Phone"
+              label="Phone *"
               fullWidth
               value={updatedData.phone}
               onChange={(e) => setUpdatedData({ ...updatedData, phone: e.target.value })}
@@ -232,14 +193,15 @@ export default function ProfilePage() {
       </ProfileCard>
       <Snackbar
         open={openAlert}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
           {messageAlert}
         </Alert>
       </Snackbar>
+      <ToastContainer />
     </ProfileContainer>
   );
 }

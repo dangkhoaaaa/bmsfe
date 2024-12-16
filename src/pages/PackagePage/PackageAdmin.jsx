@@ -221,21 +221,21 @@ const PackagePage = () => {
         <DialogTitle>{isUpdate ? 'Update Package' : 'Add Package'}</DialogTitle>
         <DialogContent>
           <TextField
-            label="Name"
+            label="Name*"
             fullWidth
             margin="normal"
             value={currentPackage.name}
             onChange={(e) => setCurrentPackage({ ...currentPackage, name: e.target.value })}
           />
           <TextField
-            label="Duration"
+            label="Duration*"
             fullWidth
             margin="normal"
             value={currentPackage.duration}
             onChange={(e) => setCurrentPackage({ ...currentPackage, duration: e.target.value })}
           />
           <TextField
-            label="Price"
+            label="Price*"
             type="number"
             fullWidth
             margin="normal"
@@ -243,7 +243,7 @@ const PackagePage = () => {
             onChange={(e) => setCurrentPackage({ ...currentPackage, price: e.target.value })}
           />
           <TextField
-            label="Description"
+            label="Description*"
             fullWidth
             margin="normal"
             multiline
@@ -259,9 +259,9 @@ const PackagePage = () => {
       </Dialog>
       <Snackbar
         open={openAlert}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
           {messageAlert}

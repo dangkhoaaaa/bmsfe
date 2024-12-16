@@ -16,7 +16,7 @@ const FeedbackPageUI = ({
   return (
     <Container>
       {/* Average Rating Section */}
-      {averageRating && (
+      {2 && (
         <Box sx={{ textAlign: 'center', mb: 2 }}>
           <Typography variant="h5" fontWeight="bold">
             Average Rating: {averageRating} / 5

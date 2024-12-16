@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Avatar, Grid, Link, InputAdornment, IconButton } from '@mui/material';
+import { TextField, Button, Box, Typography, Avatar, Grid, Link, InputAdornment, IconButton, Snackbar, Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -16,7 +16,7 @@ const theme = createTheme({
     secondary: {
       main: '#2ecc71',
     },
-  },
+  }
 });
 
 const emptyUserData = {
@@ -30,6 +30,8 @@ export default function Register() {
   const [data, setData] = useState(emptyUserData);
   const [selectedRole, setSelectedRole] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const navigate = useNavigate();
 
   const handleSelectChange = (event) => {
@@ -44,41 +46,37 @@ export default function Register() {
   };
 
   const handleSubmitRegister = async () => {
-    if (!isValidateForm()) {
-      return;
-    }
+    if (!isValidateForm()) return;
+
     const result = await ApiRegisterAccount(data, selectedRole);
     if (result.ok) {
+      setSnackbar({ open: true, message: 'Your account is successfully registered.', severity: 'success' });
+      setTimeout(() => navigate('/login'), 2000);
       setData(emptyUserData);
-      alert("Your account is successfully registered.");
-      navigate('/login');
+      setSelectedRole('');
     } else {
-      alert(result.message);
+      setSnackbar({ open: true, message: result.message, severity: 'error' });
     }
   };
 
   const isValidateForm = () => {
-    if (data.email === "" || data.email === "undefined") {
-      alert("Please provide a valid email address.");
-      return false;
-    }
-    if (data.firstName === "") {
-      alert("Please provide a valid firstName.");
-      return false;
-    }
-    if (data.lastName === "") {
-      alert("Please provide a valid lastName.");
-      return false;
-    }
-    if (data.password === "") {
-      alert("Please provide a valid password.");
-      return false;
-    }
-    return true;
-  }
+    const newErrors = {};
+    if (!data.email) newErrors.email = "Please provide a valid email address.";
+    if (!data.firstName) newErrors.firstName = "Please provide your first name.";
+    if (!data.lastName) newErrors.lastName = "Please provide your last name.";
+    if (!data.password) newErrors.password = "Please provide a password.";
+    if (!selectedRole) newErrors.role = "Please choose a role.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);  
+    setShowPassword(!showPassword);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ open: false, message: '', severity: 'success' });
   };
 
   return (
@@ -99,8 +97,8 @@ export default function Register() {
           sx={{
             backgroundColor: '#fff',
             padding: '40px',
-            borderRadius: '20px', 
-            boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)', 
+            borderRadius: '20px',
+            boxShadow: '0 10px 20px rgba(0, 0, 0, 0.15)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -108,7 +106,7 @@ export default function Register() {
             maxWidth: '500px',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: '#088A08' }}> 
+          <Avatar sx={{ m: 1, bgcolor: '#088A08' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: 2, fontWeight: 'bold', color: '#088A08' }}>
@@ -126,6 +124,8 @@ export default function Register() {
                   label="First Name"
                   autoFocus
                   onChange={handleChange}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName}
                   InputProps={{
                     style: { borderRadius: '30px' },
                   }}
@@ -140,8 +140,10 @@ export default function Register() {
                   name="lastName"
                   autoComplete="family-name"
                   onChange={handleChange}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName}
                   InputProps={{
-                    style: { borderRadius: '30px' }, 
+                    style: { borderRadius: '30px' },
                   }}
                 />
               </Grid>
@@ -154,8 +156,10 @@ export default function Register() {
                   name="email"
                   autoComplete="email"
                   onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
                   InputProps={{
-                    style: { borderRadius: '30px' }, 
+                    style: { borderRadius: '30px' },
                   }}
                 />
               </Grid>
@@ -169,8 +173,10 @@ export default function Register() {
                   id="password"
                   autoComplete="new-password"
                   onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
                   InputProps={{
-                    style: { borderRadius: '30px' }, 
+                    style: { borderRadius: '30px' },
                     endAdornment: (
                       <InputAdornment position="end">
                         <IconButton onClick={handleClickShowPassword}>
@@ -181,28 +187,44 @@ export default function Register() {
                   }}
                 />
               </Grid>
-              <StyledSelect item xs={12}>
-                <select id="roles" value={selectedRole} onChange={handleSelectChange} className="select-dropdown">
+              <Grid item xs={12}>
+                <select
+                  id="roles"
+                  value={selectedRole}
+                  onChange={handleSelectChange}
+                  className="select-dropdown"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '30px',
+                    borderColor: errors.role ? 'red' : undefined,
+                  }}
+                >
                   <option value="">--Please choose an option--</option>
                   <option value="1">Admin</option>
                   <option value="2">Shop</option>
                   <option value="3">Staff</option>
                 </select>
-              </StyledSelect>
+                {errors.role && (
+                  <Typography variant="caption" color="error">
+                    {errors.role}
+                  </Typography>
+                )}
+              </Grid>
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              color="primary" 
+              color="primary"
               sx={{
                 mt: 5,
                 mb: 2,
-                borderRadius: '30px', 
+                borderRadius: '30px',
                 padding: '10px 0',
                 fontSize: '18px',
                 background: 'linear-gradient(135deg, #b4ec51, #429321, #0f9b0f)',
-                boxShadow: '0px 6px 12px rgba(0,0,0,0.1)', 
+                boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
               }}
               onClick={handleSubmitRegister}
             >
@@ -217,6 +239,17 @@ export default function Register() {
           </Box>
         </Box>
       </Box>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={2000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity } sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
