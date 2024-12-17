@@ -24,7 +24,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
 import { Snackbar, Alert } from '@mui/material';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const OrderDetailPage = () => {
@@ -56,6 +56,8 @@ const OrderDetailPage = () => {
   };
 
   const handleUpdateStatus = () => {
+   // setMessageAlert('Order Status updated successfully!'); // Đặt thông báo
+   // setOpenAlert(true); // Mở Snackbar
     fetchUpdateOrderStatus();
   };
 
@@ -79,7 +81,7 @@ const OrderDetailPage = () => {
             }, 3000);
           }
         } else {
-          alert(result.message);
+          toast.error(result.message);
           clearInterval(intervalId);
         }
       } catch (error) {
@@ -93,11 +95,12 @@ const OrderDetailPage = () => {
     const token = localStorage.getItem('token');
     const result = await ApiChangeOrderStatus(status, orderId, token);
     if (result.ok) {
-
+    //  setMessageAlert("Updated order status successfully!");
+      //setOpenAlert(true);
       toast.success("Updated order status successfully!!!");
       fetchApiGetOrderById();
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   }
 
@@ -124,7 +127,7 @@ const OrderDetailPage = () => {
       setStatus(orderData.status);
       sendNotiToUser(orderId, orderData.customerId, orderData.shopId);
     } else {
-      alert(result.message);
+      toast.error(result.message);
     }
   };
 
@@ -132,7 +135,6 @@ const OrderDetailPage = () => {
     fetchApiGetOrderById();
     const socketConnection = io(HTTP_SOCKET_SERVER);
     setSocket(socketConnection);
-
     return () => {
       setTimeout(() => {
         socketConnection.disconnect(); // Delay disconnect by 2 seconds
@@ -245,7 +247,8 @@ const OrderDetailPage = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {shopId && (
+          {shopId && shopId !== "" && ( 
+            
             <Box sx={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
               <FormControl sx={{ minWidth: 200 }}>
                 <InputLabel>Status</InputLabel>
@@ -254,7 +257,7 @@ const OrderDetailPage = () => {
                   <MenuItem value="CHECKING">Checking</MenuItem>
                   <MenuItem value="PREPARING">Preparing</MenuItem>
                   <MenuItem value="PREPARED">Prepared</MenuItem>
-                  
+                  {/* <MenuItem value="TAKENOVER">Taken Over</MenuItem> */}
                   <MenuItem value="CANCEL">Cancel</MenuItem>
                   <MenuItem value="COMPLETE">Complete</MenuItem>
                 </Select>
@@ -349,14 +352,15 @@ const OrderDetailPage = () => {
       </Box>
       <Snackbar
         open={openAlert}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
         onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
           {messageAlert}
         </Alert>
       </Snackbar>
+      <ToastContainer />
     </StyledPaper>
   );
 };
