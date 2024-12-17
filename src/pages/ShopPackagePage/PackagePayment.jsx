@@ -50,7 +50,7 @@ const PackagePayment = () => {
         alert(result.message);
       }
     } else if (selectedPayment === "Momo") {
-      alert("This payment method is not support!");
+      alert("This feature will be developed in the future.");
     } else {
       const token = localStorage.getItem('token');
       const shopId = localStorage.getItem('shopId');
