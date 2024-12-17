@@ -182,7 +182,7 @@ function UserDetails() {
                   <TableCell>Email</TableCell>
                   <TableCell>Phone</TableCell>
                   <TableCell>Avatar</TableCell>
-                  <TableCell>Actions</TableCell>
+                 
                 </CustomTableRow>
               </TableHead>
               <TableBody>
@@ -197,11 +197,7 @@ function UserDetails() {
                         <img src={user.avatar} alt="avatar" width="40" height="40" style={{ borderRadius: '50%' }} />
                       ) : 'N/A'}
                     </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => openConfirmationDialog(user.id)}>
-                        <DeleteIcon color="error" />
-                      </IconButton>
-                    </TableCell>
+                   
                   </CustomTableRow>
                 ))}
               </TableBody>

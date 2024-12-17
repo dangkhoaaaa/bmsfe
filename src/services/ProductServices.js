@@ -1,4 +1,4 @@
-import { AIP_UPDATE_PRODUCT, AIP_GET_PRODUCT_BY_ID, AIP_CREATE_PRODUCT, API_GET_PRODUCTS_BY_SHOP_ID, ResponseData, HEADER_TOKEN, API_CHANGE_STOCK_OUT, AIP_CREATE_PRODUCT_FOR_STAFF } from "../constants/Constant"
+import { AIP_UPDATE_PRODUCT, AIP_GET_PRODUCT_BY_ID, AIP_CREATE_PRODUCT, API_GET_PRODUCTS_BY_SHOP_ID, ResponseData, HEADER_TOKEN, API_CHANGE_STOCK_OUT, AIP_CREATE_PRODUCT_FOR_STAFF, API_GET_TOP_5_DISHES } from "../constants/Constant"
 
 export const ApiGetProductByID = async (productId, token) => {
     const response = await fetch(`${AIP_GET_PRODUCT_BY_ID + productId}`, {
@@ -65,6 +65,13 @@ export const ApiSendProductToStaff = async (name, description, price, shopId,ima
 export const ApiGetProductsByShopId = async (id, search, isDesc, pageIndex, pageSize, isOutOfStock,token) => {
     const params = new URLSearchParams({id, search, isDesc, pageIndex, pageSize, isOutOfStock});
     const response = await fetch(`${API_GET_PRODUCTS_BY_SHOP_ID}?${params.toString()}`, {
+        headers: HEADER_TOKEN(token),
+    });
+    return ResponseData(response);
+}
+
+export const ApiGetTop5DishesPurchase = async (shopId, month, year, size, token) => {
+    const response = await fetch(`${API_GET_TOP_5_DISHES}?shopId=${shopId}&month=${month}&year=${year}&pageIndex=1&pageSize=${size}`, {
         headers: HEADER_TOKEN(token),
     });
     return ResponseData(response);

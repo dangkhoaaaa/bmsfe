@@ -8,11 +8,14 @@ import {
   NameTypography,
   RoleTypography,
 } from './ProfilePage.style';
-import { Button, TextField, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { ApiUpdateAccount, ApiUpdateAvatar } from '../../services/AccountServices';
 import { Snackbar, Alert } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Button, TextField, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, IconButton } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import axios from 'axios';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -22,13 +25,30 @@ export default function ProfilePage() {
     phone: '',
     createDate: '',
     lastUpdateDate: '',
-    role: '', // Change from array to string to reflect single role
+    role: '',
     shopId: '',
     shopName: '',
   });
 
   const [openAlert, setOpenAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false);
+  const [updatedData, setUpdatedData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+  });
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -36,24 +56,81 @@ export default function ProfilePage() {
     setOpenAlert(false);
   };
 
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [updatedData, setUpdatedData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-  });
+  const handleChangePassword = async () => {
+    if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      setMessageAlert("Please enter the old password, new password, and password confirmation.");
+      setOpenAlert(true);
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setMessageAlert("The new password and password confirmation do not match.");
+      setOpenAlert(true);
+      return;
+    }
+    const lowercaseRegex = /[a-z]/;
+    const uppercaseRegex = /[A-Z]/;
+    if (!lowercaseRegex.test(passwordData.newPassword)) {
+      setMessageAlert("The new password must contain at least one lowercase letter.");
+      setOpenAlert(true);
+      return;
+    }
+    if (!uppercaseRegex.test(passwordData.newPassword)) {
+      setMessageAlert("he new password must contain at least one uppercase letter.");
+      setOpenAlert(true);
+      return;
+    }
 
-  const [selectedFile, setSelectedFile] = useState(null); // State for selected file
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setMessageAlert("Token not found. Please log in again.");
+        setOpenAlert(true);
+        return;
+      }
 
-  const token = localStorage.getItem('token');
+      const response = await axios.put(
+        'https://bms-fs-api.azurewebsites.net/api/Account/change-password',
+        {
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+          confirmPassword: passwordData.confirmPassword,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setMessageAlert("Password changed successfully.");
+        setOpenAlert(true);
+        setChangePasswordDialogOpen(false);
+        setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        if (response.data.message === "Incorrect password") {
+          setMessageAlert("The old password is incorrect.");
+          setOpenAlert(true);
+        } else {
+          setMessageAlert("Password change unsuccessful. Please try again.");
+          setOpenAlert(true);
+        }
+      }
+    } catch (error) {
+      setMessageAlert("An error occurred while changing the password.");
+      setOpenAlert(true);
+      console.error("Password change error:", error);
+    }
+  };
 
   const fetchProfileData = async () => {
+    const token = localStorage.getItem('token');
     try {
       const response = await fetch('https://bms-fs-api.azurewebsites.net/api/Account/my-profile', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Pass the token in Authorization header
+          'Authorization': `Bearer ${token}`,
         },
       });
 
@@ -73,6 +150,7 @@ export default function ProfilePage() {
         if (data.data.shopId !== null) {
           localStorage.setItem("shopId", data.data.shopId);
         }
+
         localStorage.setItem("shopName", data.data.shopName);
       } else {
         console.error('Failed to fetch profile data');
@@ -82,12 +160,10 @@ export default function ProfilePage() {
     }
   };
 
-  // Fetch user profile data from API
   useEffect(() => {
     fetchProfileData();
-  }, [token]);
+  }, []);
 
-  // Open dialog for editing the profile
   const handleOpenEditDialog = () => {
     setUpdatedData({
       firstName: userData.firstName,
@@ -97,13 +173,10 @@ export default function ProfilePage() {
     setEditDialogOpen(true);
   };
 
-  // Close the edit dialog
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
-    setSelectedFile(null); // Reset selected file when closing the dialog
   };
 
-  // Save the updated data
   const handleSave = async () => {
     const resultAccount = await ApiUpdateAccount(updatedData.firstName, updatedData.lastName, updatedData.phone, token);
     if (resultAccount.ok) {
@@ -120,6 +193,34 @@ export default function ProfilePage() {
     } else {
       toast.error(resultAccount.message);
     }
+
+  };
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile) {
+      // Handle case where no file is selected
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const response = await axios.post('your/api/endpoint', formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // Handle response...
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
   };
 
   return (
@@ -131,7 +232,7 @@ export default function ProfilePage() {
 
         <NameTypography variant="h5">{`${userData.firstName} ${userData.lastName}`}</NameTypography>
         <RoleTypography variant="subtitle1" color="textSecondary">
-          Role: {userData.role} {/* Displaying single role */}
+          Role: {userData.role}
         </RoleTypography>
 
         <StyledList>
@@ -146,9 +247,83 @@ export default function ProfilePage() {
           </StyledListItem>
         </StyledList>
 
-        <Button variant="contained" color="primary" onClick={handleOpenEditDialog} style={{ marginTop: '20px' }}>
-          Update Profile
-        </Button>
+        <Button variant="contained" color="primary" onClick={handleOpenEditDialog} sx={{
+                  borderRadius: '15px',
+                  margin: '20px 0',
+                  fontSize: '16px',
+                  background: 'linear-gradient(135deg, #b4ec51, #429321, #0f9b0f)',
+                  boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
+                }}>
+                  Update Profile
+                </Button>
+
+        <Button variant="contained" color="primary" onClick={() => setChangePasswordDialogOpen(true)} sx={{
+                  borderRadius: '15px',
+                  margin: '20px 0',
+                  fontSize: '16px',
+                  background: 'linear-gradient(135deg, #b4ec51, #429321, #0f9b0f)',
+                  boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
+                }}>
+                  Change Password
+                </Button>
+
+        {/* Modal for changing password */}
+        <Dialog open={changePasswordDialogOpen} onClose={() => setChangePasswordDialogOpen(false)}>
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Old Password"
+              type="password"
+              fullWidth
+              value={passwordData.oldPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              label="New Password"
+              type={showNewPassword ? "text" : "password"}
+              fullWidth
+              value={passwordData.newPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowNewPassword(!showNewPassword)}>
+                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              margin="dense"
+              label="Confirm New Password"
+              type={showConfirmPassword ? "text" : "password"}
+              fullWidth
+              value={passwordData.confirmPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setChangePasswordDialogOpen(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleChangePassword} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         {/* Dialog for editing profile */}
         <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
@@ -176,10 +351,6 @@ export default function ProfilePage() {
               value={updatedData.phone}
               onChange={(e) => setUpdatedData({ ...updatedData, phone: e.target.value })}
             />
-            <input
-              type="file"
-              onChange={(e) => setSelectedFile(e.target.files[0])}
-            />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseEditDialog} color="secondary">
@@ -191,13 +362,10 @@ export default function ProfilePage() {
           </DialogActions>
         </Dialog>
       </ProfileCard>
-      <Snackbar
-        open={openAlert}
-        autoHideDuration={2000}
-        onClose={handleCloseAlert}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+
+      {/* Snackbar for alert */}
+      <Snackbar open={openAlert} autoHideDuration={2000} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
           {messageAlert}
         </Alert>
       </Snackbar>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Container, Typography, Box, Paper, CircularProgress, Alert, Avatar, Button, Rating, IconButton } from '@mui/material';
 import ReplyIcon from '@mui/icons-material/Reply';
+import { SignalWifiStatusbarNullRounded } from '@mui/icons-material';
+const shopId = localStorage.getItem('shopId');
 
 const FeedbackPageUI = ({
   feedbackData,
@@ -16,14 +18,16 @@ const FeedbackPageUI = ({
   return (
     <Container>
       {/* Average Rating Section */}
-      {2 && (
+   
+      { averageRating ? ( // Added condition to check for averageRating
         <Box sx={{ textAlign: 'center', mb: 2 }}>
           <Typography variant="h5" fontWeight="bold">
             Average Rating: {averageRating} / 5
           </Typography>
           <Rating value={parseFloat(averageRating)} readOnly precision={0.5} />
         </Box>
-      )}
+      ) : (
+       null   )}
 
       {/* Filter Bar */}
       <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 3, mb: 3 }}>

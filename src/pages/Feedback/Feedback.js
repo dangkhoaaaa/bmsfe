@@ -32,7 +32,7 @@ const Feedback = () => {
         const response = await axios.get(
           `https://bms-fs-api.azurewebsites.net/api/Feedback?search=${encodeURIComponent(
             debouncedSearchTerm
-          )}&pageIndex=${currentPage}&pageSize=${feedbacksPerPage}`
+          )}&pageIndex=${currentPage}&pageSize=${feedbacksPerPage}&isDesc=true`
         );
 
         if (response.data.isSuccess) {

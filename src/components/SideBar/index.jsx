@@ -75,6 +75,7 @@ const Sidebar = () => {
     ];
   } else if (user && user.role && user.role.includes("Shop")) {
     sidebarItems = [
+      { text: "Dashboard", icon: <PortraitIcon />, path: "/shop/dashboard" },
       { text: "Coupon", icon: <ConfirmationNumberIcon />, path: "/shop/coupon-page" },
       { text: "Breakfast-Menu", icon: <RestaurantMenuIcon />, path: "/shop/menu" },
       { text: "Shop Package", icon: <BalanceIcon />, path: "/shop/package" },

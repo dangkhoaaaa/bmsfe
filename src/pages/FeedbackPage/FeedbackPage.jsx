@@ -30,9 +30,7 @@ const FeedbackPage = () => {
         if (filter !== "All") {
             url += `&rate=${filter}`;
         }
-        console.log ("hi1");
       const response = await axios.get(url);
-            console.log ("fb ne"+response.data.data.data );
             const feedback = response.data.data.data || [];
             setFeedbackData(feedback);
             setTotalFeedback(response.data.data.total || 0); // Cập nhật tổng số feedback

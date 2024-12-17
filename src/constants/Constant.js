@@ -138,6 +138,7 @@ export const AIP_GET_PRODUCT_BY_ID = HTTP_SERVER + "/api/Product/";
 export const AIP_CREATE_PRODUCT = HTTP_SERVER + "/api/Product";
 export const AIP_CREATE_PRODUCT_FOR_STAFF = HTTP_SERVER + "/api/Product/AddProductToStaff";
 export const API_GET_PRODUCTS_BY_SHOP_ID = HTTP_SERVER + "/api/Product/all-product-by-shop-id";
+export const API_GET_TOP_5_DISHES = HTTP_SERVER + "/api/Product/GetProductBestSellerInShop";
 
 /*
 ** API SHOP
@@ -167,10 +168,12 @@ export const API_UPDATE_ORDER_STATUS = HTTP_SERVER + "/api/Order/";
 export const API_CHANGE_ORDER_STATUS = HTTP_SERVER + "/api/Order/ChangeOrderStatus";
 export const API_GET_TOTAL_ORDERS = HTTP_SERVER + "/api/Order/GetTotalOrder";
 export const API_GET_LIST_ORDERS = HTTP_SERVER + "/api/Order/GetListOrders";
+export const API_GET_TOTAL_ORDERS_IN_SHOP = HTTP_SERVER + "/api/Order/GetTotalOrderInShop/";
 
 /*
  ** API TRANSACTION
  */
 export const API_GET_ALL_TRANSACTION = HTTP_SERVER + "/api/Transaction/GetListTransactions";
 export const API_GET_TOTAL_REVENUE = HTTP_SERVER + "/api/Transaction/GetTotalRevenue";
+export const API_GET_TOTAL_REVENUE_IN_SHOP = HTTP_SERVER + "/api/Transaction/GetTotalRevenueForShop/";
 export const API_GET_TOP_5_USER_PURCHARSE = HTTP_SERVER + "/api/Transaction/GetTopUserHaveHighTransaction";

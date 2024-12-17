@@ -36,21 +36,21 @@ export default function Header() {
             console.log('Disconnected from server');
         });
 
-        // Kết nối tới room "shop" theo shopId
+        // Connect to the shop's room using shopId
         if (decoded.role.includes('Shop')) {
             const shopId = localStorage.getItem('shopId');
             console.log('Emitting join-shop-topic for shopId:', shopId);
             socket.emit('join-shop-topic', shopId);
 
-            // Lắng nghe sự kiện thông báo
+            // Listen for order notifications
             socket.on('order-notification', (message) => {
-                fetchCountNotiByRole(); // Cập nhật lại số lượng thông báo chưa đọc
-                fetchNotiByRole(); // Lấy danh sách thông báo mới
+                fetchCountNotiByRole(); // Update unread notifications count
+                fetchNotiByRole(); // Fetch updated notifications
             });
         }
 
         return () => {
-            socket.disconnect(); // Ngắt kết nối khi component unmount
+            socket.disconnect(); // Disconnect socket on component unmount
         };
     }, []);
 
@@ -59,13 +59,13 @@ export default function Header() {
             await fetchNotiForShop();
             await fetchReadAllNotiForShop();
         }
-    }
+    };
 
     const fetchCountNotiByRole = async () => {
         if (decoded.role.includes('Shop')) {
             await fetchCountNotiForShop();
         }
-    }
+    };
 
     const fetchReadAllNotiForShop = async () => {
         const shopId = localStorage.getItem('shopId');
@@ -73,7 +73,7 @@ export default function Header() {
         if (!result.ok) {
             alert(result.message);
         }
-    }
+    };
 
     const fetchNotiForShop = async () => {
         const shopId = localStorage.getItem('shopId');
@@ -83,7 +83,7 @@ export default function Header() {
         } else {
             alert(result.message);
         }
-    }
+    };
 
     const fetchCountNotiForShop = async () => {
         const shopId = localStorage.getItem('shopId');
@@ -93,7 +93,7 @@ export default function Header() {
         } else {
             alert(result.message);
         }
-    }
+    };
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -113,8 +113,18 @@ export default function Header() {
                 padding: '0 20px',
             }}
         >
-            <div className='logo' style={{ color: 'white', fontWeight: 'bold' }}>
-                Welcome to BMS
+            <div className='d-flex align-items-center'>
+                <img 
+                    src="/logo192.png" // Update this path if your logo is stored elsewhere
+                    alt="Logo"
+                    style={{
+                        height: 40, // Adjust logo height to match header
+                        marginRight: 10, // Add spacing between logo and text
+                    }}
+                />
+                <span style={{ color: 'white', fontWeight: 'bold' }}>
+                    Welcome to BMS
+                </span>
             </div>
             <IconButton onClick={handleNotificationClick} style={{ color: 'white' }}>
                 <Badge badgeContent={unreadCount} color='error' overlap='circular'>
@@ -139,7 +149,7 @@ export default function Header() {
                                 key={noti.id}
                                 alignItems="flex-start"
                                 onClick={() => handleItemClick(noti.orderId)}
-                                className="notification-item" // Sử dụng class CSS
+                                className="notification-item"
                             >
                                 <ListItemAvatar>
                                     <Avatar alt={`${noti.firstName} ${noti.lastName}`} src={noti.avatar} />

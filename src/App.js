@@ -47,6 +47,8 @@ import OrderDetailPage from "./pages/OrderDetailPage/OrderDetailPage.jsx";
 import ShopLocation from "./pages/ShopLocation/ShopLocation.jsx";
 import ProductApplication from "./pages/ProductApplication/ProductApplication.js";
 import DetailShopApplication from "./pages/ProductApplication/DetailProductApplication.js";
+import DashboardShop from "./pages/DashboardShop/index.jsx";
+
 function App() {
   return (
     <AuthProvider>
@@ -100,6 +102,10 @@ function App() {
             <Route
               path="/shop/package"
               element={<ProtectedRoute element={<ShopPackagePage />} requiredRole={"Shop"} />}
+            />
+            <Route
+              path="/shop/dashboard"
+              element={<ProtectedRoute element={<DashboardShop />} requiredRole={"Shop"} />}
             />
             <Route
               path="/shop/package/payment"

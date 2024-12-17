@@ -91,8 +91,8 @@ const OrderDetailPage = () => {
     const token = localStorage.getItem('token');
     const result = await ApiChangeOrderStatus(status, orderId, token);
     if (result.ok) {
-      setMessageAlert("Updated order status successfully!");
-      setOpenAlert(true);
+
+      toast.success("Updated order status successfully!!!");
       fetchApiGetOrderById();
     } else {
       alert(result.message);

@@ -10,6 +10,11 @@ import { ApiGetShopById, ApiUpdateShop } from '../../services/ShopServices';
 import { useNavigate } from 'react-router-dom';
 import { ApiGetAddressAutoComplete } from '../../services/MapServices';
 import { Snackbar, Alert } from '@mui/material';
+
+import { InputAdornment, IconButton } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -24,7 +29,16 @@ export default function ShopProfile() {
   const [selectedAddress, setSelectedAddress] = useState('');
   const [debounceTimeout, setDebounceTimeout] = useState(null);
   const [openAlert, setOpenAlert] = useState(false);
+  const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -32,6 +46,70 @@ export default function ShopProfile() {
     setOpenAlert(false);
   };
   const token = localStorage.getItem('token');
+
+
+  const handleChangePassword = async () => {
+    if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      toast.error("Please enter the old password, new password, and password confirmation.");
+   //   setOpenAlert(true);
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("The new password and password confirmation do not match.");
+     // setOpenAlert(true);
+      return;
+    }
+    const lowercaseRegex = /[a-z]/;
+    const uppercaseRegex = /[A-Z]/;
+    if (!lowercaseRegex.test(passwordData.newPassword)) {
+      toast.error("The new password must contain at least one lowercase letter.");
+     // setOpenAlert(true);
+      return;
+    }
+    if (!uppercaseRegex.test(passwordData.newPassword)) {
+      toast.error("the new password must contain at least one uppercase letter.");
+     // setOpenAlert(true);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setMessageAlert("Token not found. Please log in again.");
+      //  setOpenAlert(true);
+        return;
+      }
+
+      const response = await axios.put(
+        'https://bms-fs-api.azurewebsites.net/api/Account/change-password',
+        {
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+          confirmPassword: passwordData.confirmPassword,
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.isSuccess === true) {
+        toast.success("Password changed successfully.");
+        setChangePasswordDialogOpen(false);
+        setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        if (response.data.message === "Incorrect password") {
+          toast.error("The old password is incorrect.");
+        } else {
+          toast.error("Password change unsuccessful. Please try again.");
+        }
+      }
+    } catch (error) {
+      toast.error("An error occurred while changing the password.");
+      console.error("Password change error:", error);
+    }
+  };
 
   const fetchAddressSuggestions = async (input) => {
     const result = await ApiGetAddressAutoComplete(input);
@@ -204,6 +282,74 @@ export default function ShopProfile() {
           Update Profile
         </Button>
 
+        <Button variant="contained" color="primary" onClick={() => setChangePasswordDialogOpen(true)} sx={{
+          borderRadius: '15px',
+          margin: '20px 0',
+          fontSize: '16px',
+          background: 'linear-gradient(135deg, #b4ec51, #429321, #0f9b0f)',
+          boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
+        }}>
+          Change Password
+        </Button>
+        
+         {/* Modal for changing password */}
+         <Dialog open={changePasswordDialogOpen} onClose={() => setChangePasswordDialogOpen(false)}>
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Old Password"
+              type="password"
+              fullWidth
+              value={passwordData.oldPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              label="New Password"
+              type={showNewPassword ? "text" : "password"}
+              fullWidth
+              value={passwordData.newPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowNewPassword(!showNewPassword)}>
+                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              margin="dense"
+              label="Confirm New Password"
+              type={showConfirmPassword ? "text" : "password"}
+              fullWidth
+              value={passwordData.confirmPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setChangePasswordDialogOpen(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleChangePassword} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         {/* Dialog for editing profile */}
         <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
           <DialogTitle>UPDATE PROFILE</DialogTitle>
@@ -295,7 +441,7 @@ export default function ShopProfile() {
         </Dialog>
         <Snackbar
           open={openAlert}
-          autoHideDuration={2000}
+          autoHideDuration={3000}
           onClose={handleCloseAlert}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >

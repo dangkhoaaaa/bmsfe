@@ -49,9 +49,9 @@ const DashboardStaff = () => {
 
       try {
         const token = localStorage.getItem("token");
-        const year = 2024;
-        const month = 11; // November
-
+        const currentDate = new Date(); // Get the current date
+  const year = currentDate.getFullYear(); // Get the current year
+  const month = currentDate.getMonth() + 1; 
         // Fetch monthly new users
         const userRequests = Array.from({ length: 12 }, (_, i) =>
           axios.get(
@@ -208,35 +208,39 @@ const DashboardStaff = () => {
     plugins: { legend: { position: "top" } },
   };
 
+  const currentDate = new Date();
+  const options = { month: 'long', year: 'numeric' };
+  const formattedDate = currentDate.toLocaleDateString('en-US', options); // e.g., "November 2023"
+
   return (
     <Box sx={{ padding: 4, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
       <Typography variant="h4" gutterBottom>
-        Dashboard - Breakfast App
+        Dashboard - Breakfast App ({formattedDate})
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={2}>
           <StatsCard
             title="Total Users"
             value={totalUsers}
             gradient="linear-gradient(135deg, #2196F3 0%, #21CBF3 100%)"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={3}>
           <StatsCard
             title="Total Orders"
-            value={totalOrders} // Display total orders for November
+            value={totalOrders}
             gradient="linear-gradient(135deg, #66BB6A 0%, #43A047 100%)"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={12} md={4}>
           <StatsCard
             title="Total Revenue"
-            value={<span className="total-revenue">{`${totalRevenue.toLocaleString()}`}</span>} // Thêm lớp CSS
+            value={<span className="total-revenue">{`${totalRevenue.toLocaleString()}`}</span>}
             gradient="linear-gradient(135deg, #FFA726 0%, #FB8C00 100%)"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={6} sm={6} md={3}>
           <StatsCard
             title="New Users"
             value={newUsersData.reduce((acc, val) => acc + val, 0)}

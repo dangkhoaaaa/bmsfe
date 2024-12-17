@@ -17,7 +17,7 @@ const CRUDCategory = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://bms-fs-api.azurewebsites.net/api/Category?pageIndex=${currentPage}&pageSize=${categoriesPerPage}&search=${encodeURIComponent(
+          `https://bms-fs-api.azurewebsites.net/api/Category?pageIndex=${currentPage}&pageSize=${categoriesPerPage}&isDesc=true&search=${encodeURIComponent(
             searchTerm
           )}`
         );

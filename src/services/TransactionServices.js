@@ -14,6 +14,13 @@ export const ApiGetTotalRevenues = async (month, year, status, token) => {
     return Constant.ResponseData(response);
 }
 
+export const ApiGetTotalRevenuesInShop = async (shopId, month, year, status, token) => {
+    const response = await fetch(`${Constant.API_GET_TOTAL_REVENUE_IN_SHOP}${shopId}?month=${month}&year=${year}&status=${status}`, {
+        headers: Constant.HEADER_TOKEN(token),
+    });
+    return Constant.ResponseData(response);
+}
+
 export const ApiGetTop5UserPurchase = async (month, year, size, token) => {
     const response = await fetch(`${Constant.API_GET_TOP_5_USER_PURCHARSE}?month=${month}&year=${year}&pageIndex=1&pageSize=${size}`, {
         headers: Constant.HEADER_TOKEN(token),

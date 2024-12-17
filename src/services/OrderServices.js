@@ -51,3 +51,10 @@ export const ApiGetTotalOrders = async (month, year, status, token) => {
     });
     return Constant.ResponseData(response);
 }
+
+export const ApiGetTotalOrdersInShop = async (shopId, month, year, status, token) => {
+    const response = await fetch(`${Constant.API_GET_TOTAL_ORDERS_IN_SHOP}${shopId}?month=${month}&year=${year}&status=${status}`, {
+        headers: Constant.HEADER_TOKEN(token),
+    });
+    return Constant.ResponseData(response);
+}
