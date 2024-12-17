@@ -24,6 +24,8 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
 import { Snackbar, Alert } from '@mui/material';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const OrderDetailPage = () => {
   const [socket, setSocket] = useState(null);
