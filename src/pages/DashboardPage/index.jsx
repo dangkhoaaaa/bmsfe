@@ -81,7 +81,7 @@ const Dashboard = () => {
               <StatsCard title="Orders" thisMonth={totalOrders} lastMonth={lastTotalOrders} />
             </div>
             <div className='col-6'>
-              <StatsCard title="First-Time Users" thisMonth={totalNewUsers} lastMonth={lastTotalNewUsers} />
+              <StatsCard title="New Users" thisMonth={totalNewUsers} lastMonth={lastTotalNewUsers} />
             </div>
             <div className='col-12'>
               <StatsCard title="Revenue" thisMonth={totalRevenues} lastMonth={lastTotalRevenues} isMoney={true} />

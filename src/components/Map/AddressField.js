@@ -20,7 +20,7 @@ const AddressField = () => {
   };
 
   return (
-    <LoadScript googleMapsApiKey="AlzaSyGpCG5SrSCk-n1TWzoyTLa1Wt891BhXWBO" libraries={['places']}>
+    <LoadScript googleMapsApiKey="AlzaSydapZiNthTw3F10s6HOw1m0g4IK5hF687x" libraries={['places']}>
       <Grid item xs={12} sm={12}>
         <Autocomplete onLoad={handleLoad} onPlaceChanged={handlePlaceChanged}>
           <TextField

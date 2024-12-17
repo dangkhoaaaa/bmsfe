@@ -10,12 +10,14 @@ import {
 } from './ProfilePage.style';
 import { ApiUpdateAccount, ApiUpdateAvatar } from '../../services/AccountServices';
 import { Snackbar, Alert } from '@mui/material';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button, TextField, ListItemText, Dialog, DialogActions, DialogContent, DialogTitle, InputAdornment, IconButton } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ProfilePage() {
   const [userData, setUserData] = useState({
@@ -25,7 +27,7 @@ export default function ProfilePage() {
     phone: '',
     createDate: '',
     lastUpdateDate: '',
-    role: '',
+    role: '', // Change from array to string to reflect single role
     shopId: '',
     shopName: '',
   });
@@ -34,11 +36,6 @@ export default function ProfilePage() {
   const [messageAlert, setMessageAlert] = useState('');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false);
-  const [updatedData, setUpdatedData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-  });
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
     newPassword: '',
@@ -56,35 +53,43 @@ export default function ProfilePage() {
     setOpenAlert(false);
   };
 
+  const [updatedData, setUpdatedData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+  });
+
+
   const handleChangePassword = async () => {
     if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-      setMessageAlert("Please enter the old password, new password, and password confirmation.");
-      setOpenAlert(true);
+      toast.error("Please enter the old password, new password, and password confirmation.");
+      //setOpenAlert(true);
+     
       return;
     }
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setMessageAlert("The new password and password confirmation do not match.");
-      setOpenAlert(true);
+      toast.error("The new password and password confirmation do not match.");
+      //setOpenAlert(true);
       return;
     }
     const lowercaseRegex = /[a-z]/;
     const uppercaseRegex = /[A-Z]/;
     if (!lowercaseRegex.test(passwordData.newPassword)) {
-      setMessageAlert("The new password must contain at least one lowercase letter.");
-      setOpenAlert(true);
+      toast.error("The new password must contain at least one lowercase letter.");
+     // setOpenAlert(true);
       return;
     }
     if (!uppercaseRegex.test(passwordData.newPassword)) {
-      setMessageAlert("he new password must contain at least one uppercase letter.");
-      setOpenAlert(true);
+      toast.error("The new password must contain at least one uppercase letter.");
+      //setOpenAlert(true);
       return;
     }
 
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        setMessageAlert("Token not found. Please log in again.");
-        setOpenAlert(true);
+       toast.error("Token not found. Please log in again.");
+        //setOpenAlert(true);
         return;
       }
 
@@ -109,20 +114,20 @@ export default function ProfilePage() {
         setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
       } else {
         if (response.data.message === "Incorrect password") {
-          setMessageAlert("The old password is incorrect.");
-          setOpenAlert(true);
+          toast.error("The old password is incorrect.");
+         // setOpenAlert(true);
         } else {
-          setMessageAlert("Password change unsuccessful. Please try again.");
-          setOpenAlert(true);
+          toast.error("Password change unsuccessful. Please try again.");
+        //  setOpenAlert(true);
         }
       }
     } catch (error) {
-      setMessageAlert("An error occurred while changing the password.");
-      setOpenAlert(true);
+      toast.error("An error occurred while changing the password.");
+     // setOpenAlert(true);
       console.error("Password change error:", error);
     }
   };
-
+  
   const fetchProfileData = async () => {
     const token = localStorage.getItem('token');
     try {
@@ -130,7 +135,7 @@ export default function ProfilePage() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`, // Pass the token in Authorization header
         },
       });
 
@@ -150,7 +155,6 @@ export default function ProfilePage() {
         if (data.data.shopId !== null) {
           localStorage.setItem("shopId", data.data.shopId);
         }
-
         localStorage.setItem("shopName", data.data.shopName);
       } else {
         console.error('Failed to fetch profile data');
@@ -160,10 +164,12 @@ export default function ProfilePage() {
     }
   };
 
+  // Fetch user profile data from API
   useEffect(() => {
     fetchProfileData();
-  }, []);
+  }, [token]);
 
+  // Open dialog for editing the profile
   const handleOpenEditDialog = () => {
     setUpdatedData({
       firstName: userData.firstName,
@@ -173,10 +179,13 @@ export default function ProfilePage() {
     setEditDialogOpen(true);
   };
 
+  // Close the edit dialog
   const handleCloseEditDialog = () => {
     setEditDialogOpen(false);
+    setSelectedFile(null); // Reset selected file when closing the dialog
   };
 
+  // Save the updated data
   const handleSave = async () => {
     const resultAccount = await ApiUpdateAccount(updatedData.firstName, updatedData.lastName, updatedData.phone, token);
     if (resultAccount.ok) {
@@ -192,35 +201,33 @@ export default function ProfilePage() {
       }
     } else {
       toast.error(resultAccount.message);
-    }
+    } };
 
-  };
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedFile) {
-      // Handle case where no file is selected
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-
-      const response = await axios.post('your/api/endpoint', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      // Handle response...
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
+    const handleFileChange = (event) => {
+      setSelectedFile(event.target.files[0]);
+    };
+  
+    const handleSubmit = async () => {
+      if (!selectedFile) {
+        // Handle case where no file is selected
+        return;
+      }
+  
+      try {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+  
+        const response = await axios.post('your/api/endpoint', formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        // Handle response...
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
   };
 
   return (
@@ -232,7 +239,7 @@ export default function ProfilePage() {
 
         <NameTypography variant="h5">{`${userData.firstName} ${userData.lastName}`}</NameTypography>
         <RoleTypography variant="subtitle1" color="textSecondary">
-          Role: {userData.role}
+          Role: {userData.role} {/* Displaying single role */}
         </RoleTypography>
 
         <StyledList>
@@ -246,7 +253,6 @@ export default function ProfilePage() {
             <ListItemText primary="Last Updated" secondary={new Date(userData.lastUpdateDate).toLocaleDateString()} />
           </StyledListItem>
         </StyledList>
-
         <Button variant="contained" color="primary" onClick={handleOpenEditDialog} sx={{
                   borderRadius: '15px',
                   margin: '20px 0',
@@ -325,7 +331,8 @@ export default function ProfilePage() {
           </DialogActions>
         </Dialog>
 
-        {/* Dialog for editing profile */}
+
+               {/* Dialog for editing profile */}
         <Dialog open={editDialogOpen} onClose={handleCloseEditDialog}>
           <DialogTitle>Edit Profile</DialogTitle>
           <DialogContent>
@@ -351,6 +358,10 @@ export default function ProfilePage() {
               value={updatedData.phone}
               onChange={(e) => setUpdatedData({ ...updatedData, phone: e.target.value })}
             />
+            <input
+              type="file"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseEditDialog} color="secondary">
@@ -362,10 +373,13 @@ export default function ProfilePage() {
           </DialogActions>
         </Dialog>
       </ProfileCard>
-
-      {/* Snackbar for alert */}
-      <Snackbar open={openAlert} autoHideDuration={2000} onClose={handleCloseAlert} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-        <Alert onClose={handleCloseAlert} severity="error" sx={{ width: '100%' }}>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={2000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
           {messageAlert}
         </Alert>
       </Snackbar>
