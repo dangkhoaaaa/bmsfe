@@ -48,6 +48,7 @@ import ShopLocation from "./pages/ShopLocation/ShopLocation.jsx";
 import ProductApplication from "./pages/ProductApplication/ProductApplication.js";
 import DetailShopApplication from "./pages/ProductApplication/DetailProductApplication.js";
 import DashboardShop from "./pages/DashboardShop/index.jsx";
+import ShopOperatingHours from "./pages/ShopOperatingHours/index.jsx";
 
 function App() {
   return (
@@ -119,6 +120,11 @@ function App() {
               path="/shop/feedback-shop"
               element={<ProtectedRoute element={<FeedBackShop />} requiredRole={"Shop"} />}
             />
+            <Route
+              path="/shop/operating-hours"
+              element={<ProtectedRoute element={<ShopOperatingHours />} requiredRole={"Shop"} />}
+            />
+            
             <Route
               path="/shop/coupon-page"
               element={<ProtectedRoute element={<CouponPage />} requiredRole={"Shop"} />}

@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 const OrderShop = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState('ORDERED');
+  const [status, setStatus] = useState('All');
   const [searchTerm, setSearchTerm] = useState(''); // State for the search term
   const [totalOrders, setTotalOrders] = useState(0); // Total orders for pagination
   const PAGE_SIZE_DEFAULT = 10;
@@ -89,6 +89,7 @@ const OrderShop = () => {
               onChange={(e) => setStatus(e.target.value)}
               label="Status"
             >
+              <MenuItem value="All">All</MenuItem>
               <MenuItem value="ORDERED">Ordered</MenuItem>
               <MenuItem value="CHECKING">Checking</MenuItem>
               <MenuItem value="PREPARING">Preparing</MenuItem>

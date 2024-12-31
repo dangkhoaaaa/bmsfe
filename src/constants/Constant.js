@@ -107,6 +107,17 @@ export const API_REMOVE_PRODUCT_FROM_CATEGORY = HTTP_SERVER + "/api/RegisterCate
 export const API_GET_TOTAL_NEW_USER = HTTP_SERVER + "/api/User/CountNewUser";
 
 /*
+ ** API UNIVERSITY
+ */
+export const API_GET_ALL_UNIVERSITY = HTTP_SERVER + "/api/University";
+
+/*
+** API OPERATION HOURS
+*/
+export const API_GET_OPERATION_HOURS_FOR_SHOP = HTTP_SERVER + "/api/OpeningHour/GetOpeningHoursForShop";
+export const API_UPDATE_OPERATION_HOURS_FOR_SHOP = HTTP_SERVER + "/api/OpeningHour/UpdateOpeningHoursForShop";
+
+/*
  ** API AUTH
  */
 export const API_REGISTER_ACCOUNT = HTTP_SERVER + "/api/Auth/register";
@@ -132,6 +143,7 @@ export const API_UPDATE_COUPON = HTTP_SERVER + "/api/Coupon/";
 /*
  ** API PRODUCT
  */
+export const API_DELETE_PRODUCT = HTTP_SERVER + "/api/Product";
 export const API_CHANGE_STOCK_OUT = HTTP_SERVER + "/api/Product/ChangeOutOfStock";
 export const AIP_UPDATE_PRODUCT = HTTP_SERVER + "/api/Product/";
 export const AIP_GET_PRODUCT_BY_ID = HTTP_SERVER + "/api/Product/";
@@ -169,6 +181,7 @@ export const API_CHANGE_ORDER_STATUS = HTTP_SERVER + "/api/Order/ChangeOrderStat
 export const API_GET_TOTAL_ORDERS = HTTP_SERVER + "/api/Order/GetTotalOrder";
 export const API_GET_LIST_ORDERS = HTTP_SERVER + "/api/Order/GetListOrders";
 export const API_GET_TOTAL_ORDERS_IN_SHOP = HTTP_SERVER + "/api/Order/GetTotalOrderInShop/";
+export const API_CANCEL_LIST_ORDERS = HTTP_SERVER + "/api/Order/CancelListOrder";
 
 /*
  ** API TRANSACTION
@@ -177,3 +190,8 @@ export const API_GET_ALL_TRANSACTION = HTTP_SERVER + "/api/Transaction/GetListTr
 export const API_GET_TOTAL_REVENUE = HTTP_SERVER + "/api/Transaction/GetTotalRevenue";
 export const API_GET_TOTAL_REVENUE_IN_SHOP = HTTP_SERVER + "/api/Transaction/GetTotalRevenueForShop/";
 export const API_GET_TOP_5_USER_PURCHARSE = HTTP_SERVER + "/api/Transaction/GetTopUserHaveHighTransaction";
+
+/*
+ ** API WALLET
+ */
+export const API_GET_WALLET_BY_TOKEN = HTTP_SERVER + "/api/Wallet/GetWalletByUserId";

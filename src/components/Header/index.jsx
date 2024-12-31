@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
+import { ApiGetWalletByUser } from '../../services/WalletServices';
 
 dayjs.extend(relativeTime);
 
@@ -19,14 +20,25 @@ export default function Header() {
     const decoded = jwtDecode(token);
     const navigate = useNavigate();
     const socket = io(HTTP_SOCKET_SERVER);
+    const [wallet, setWallet] = useState(null);
 
     const handleNotificationClick = async (event) => {
         setAnchorEl(event.currentTarget);
         await fetchNotiByRole();
     };
 
+    const fetchWallet = async () => {
+        const result = await ApiGetWalletByUser(token);
+        if (result.ok) {
+            setWallet(result.body.data);
+        } else {
+            alert(result.message);
+        }
+    }
+
     useEffect(() => {
         fetchCountNotiByRole();
+        fetchWallet();
 
         socket.on('connect', () => {
             console.log('Connected to server with socket ID:', socket.id);
@@ -114,7 +126,7 @@ export default function Header() {
             }}
         >
             <div className='d-flex align-items-center'>
-                <img 
+                <img
                     src="/logo192.png" // Update this path if your logo is stored elsewhere
                     alt="Logo"
                     style={{
@@ -126,11 +138,17 @@ export default function Header() {
                     Welcome to BMS
                 </span>
             </div>
-            <IconButton onClick={handleNotificationClick} style={{ color: 'white' }}>
-                <Badge badgeContent={unreadCount} color='error' overlap='circular'>
-                    <NotificationsIcon />
-                </Badge>
-            </IconButton>
+            <div className='d-flex align-items-center'>
+                <span className='text-light mx-3'>{new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    }).format(wallet && wallet.balance)}</span>
+                <IconButton onClick={handleNotificationClick} style={{ color: 'white' }}>
+                    <Badge badgeContent={unreadCount} color='error' overlap='circular'>
+                        <NotificationsIcon />
+                    </Badge>
+                </IconButton>
+            </div>
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}

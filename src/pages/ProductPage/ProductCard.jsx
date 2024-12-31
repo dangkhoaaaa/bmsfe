@@ -17,7 +17,7 @@ const ProductCard = ({ product, onDelete, onEdit }) => {
     };
 
     return (
-        <div className="product-card" style={{ height: 450 }}>
+        <div className="product-card" style={{ height: 480 }}>
             <img
                 style={{ width: '100%', height: 170, objectFit: 'cover' }}
                 src={selectedImage || 'default-image-url.jpg'}
@@ -39,7 +39,7 @@ const ProductCard = ({ product, onDelete, onEdit }) => {
                     <p>No images available</p>
                 )}
             </div>
-            <div style={{ height: 150 }}>
+            <div style={{ height: 180 }}>
                 <h3>{product.name}</h3>
                 <p>Price: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</p>
                 <p>{product.description}</p>

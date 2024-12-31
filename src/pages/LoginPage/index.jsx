@@ -60,11 +60,11 @@ export default function Login() {
   };
 
   const navigateAfterLogin = (decoded, token) => {
-    if (decoded.role.includes('Admin')) {
+    if (decoded.role.toLowerCase() == "admin" || decoded.role.includes('Admin')) {
       navigate('/admin');
-    } else if (decoded.role.includes('Staff')) {
+    } else if (decoded.role.toLowerCase() == "staff" || decoded.role.includes('Staff')) {
       navigate('/shop-application');
-    } else if (decoded.role.includes('Shop')) {
+    } else if (decoded.role.toLowerCase() == "shop" || decoded.role.includes('Shop')) {
       setShopLocalInfo(token);
     } else {
       toast.error('Unauthorized role');

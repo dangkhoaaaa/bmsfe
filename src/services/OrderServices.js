@@ -1,9 +1,9 @@
 import * as Constant from "../constants/Constant"
 
 export const ApiGetOrderByShopId = async (shopId, status, search, isDesc, pageIndex, pageSize, token) => {
-    const statusDefault = status ?? "ORDERED";
     const searchDefault = search ?? "";
-    const response = await fetch(`${Constant.API_GET_ORDER_BY_SHOP_ID}?id=${shopId}&status=${statusDefault}&search=${encodeURIComponent(searchDefault)}&isDesc=${isDesc ?? true}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+    const statusString = (status == "All" || status == null) ? "" : `&status=${status}`
+    const response = await fetch(`${Constant.API_GET_ORDER_BY_SHOP_ID}?id=${shopId}${statusString}&search=${encodeURIComponent(searchDefault)}&isDesc=${isDesc ?? true}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
         headers: Constant.HEADER_TOKEN(token),
     });
     return Constant.ResponseData(response);
@@ -17,9 +17,9 @@ export const ApiGetOrderById = async (orderId, token) => {
 }
 
 export const ApiGetListOrders = async (status, search, isDesc, pageIndex, pageSize, token) => {
-    const statusDefault = status ?? "ORDERED";
     const searchDefault = search ?? "";
-    const response = await fetch(`${Constant.API_GET_LIST_ORDERS}?status=${statusDefault}&search=${encodeURIComponent(searchDefault)}&isDesc=${isDesc ?? true}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+    const statusString = (status == "All" || status == null) ? "" : `status=${status}&`
+    const response = await fetch(`${Constant.API_GET_LIST_ORDERS}?${statusString}search=${encodeURIComponent(searchDefault)}&isDesc=${isDesc ?? true}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
         headers: Constant.HEADER_TOKEN(token),
     });
     return Constant.ResponseData(response);
@@ -41,6 +41,15 @@ export const ApiChangeOrderStatus = async (status, orderId, token) => {
         method: "POST",
         headers: Constant.HEADER_TOKEN(token),
         body: formData
+    });
+    return Constant.ResponseData(response);
+}
+
+export const ApiCancelListOrders = async (orderIds, token) => {
+    const response = await fetch(`${Constant.API_CANCEL_LIST_ORDERS}`, {
+        method: "PUT",
+        headers: Constant.HTTP_HEADER_TOKEN(token),
+        body: JSON.stringify(orderIds)
     });
     return Constant.ResponseData(response);
 }

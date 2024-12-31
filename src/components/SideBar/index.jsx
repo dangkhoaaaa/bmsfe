@@ -80,6 +80,7 @@ const Sidebar = () => {
       { text: "Breakfast-Menu", icon: <RestaurantMenuIcon />, path: "/shop/menu" },
       { text: "Shop Package", icon: <BalanceIcon />, path: "/shop/package" },
       { text: "Feedback", icon: <RateReviewOutlinedIcon />, path: "/shop/feedback-shop" },
+      { text: "Operating Hours", icon: <ContactPhoneIcon />, path: "/shop/operating-hours" },
       // { text: "Location", icon: <FmdGoodOutlinedIcon />, path: "/shop/location" },
       { text: "Location", icon: <FmdGoodOutlinedIcon />, path: "/shop/location" },
       { text: 'Orders', icon: <StoreOutlinedIcon />, path: "/shop/orders" },
