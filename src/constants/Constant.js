@@ -182,6 +182,7 @@ export const API_GET_TOTAL_ORDERS = HTTP_SERVER + "/api/Order/GetTotalOrder";
 export const API_GET_LIST_ORDERS = HTTP_SERVER + "/api/Order/GetListOrders";
 export const API_GET_TOTAL_ORDERS_IN_SHOP = HTTP_SERVER + "/api/Order/GetTotalOrderInShop/";
 export const API_CANCEL_LIST_ORDERS = HTTP_SERVER + "/api/Order/CancelListOrder";
+export const API_GET_ORDERS_IN_TIME_FOR_SHOP = HTTP_SERVER + "/api/Order/GetOrdersInTimeForShop/";
 
 /*
  ** API TRANSACTION
@@ -195,3 +196,11 @@ export const API_GET_TOP_5_USER_PURCHARSE = HTTP_SERVER + "/api/Transaction/GetT
  ** API WALLET
  */
 export const API_GET_WALLET_BY_TOKEN = HTTP_SERVER + "/api/Wallet/GetWalletByUserId";
+export const API_GET_ALL_TRANSACTION_WALLET_OF_USER = HTTP_SERVER + "/api/Wallet/GetAllTransactionOfUserWallet";
+
+/*
+ ** API STUDENT
+ */
+ export const API_GET_STUDENT_CONFIRM_LIST = HTTP_SERVER + "/api/StudentApplication";
+ export const API_CHANGE_STATUS_STUDENT = HTTP_SERVER + "/api/StudentApplication/";
+

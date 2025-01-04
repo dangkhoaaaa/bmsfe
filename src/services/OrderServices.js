@@ -2,7 +2,7 @@ import * as Constant from "../constants/Constant"
 
 export const ApiGetOrderByShopId = async (shopId, status, search, isDesc, pageIndex, pageSize, token) => {
     const searchDefault = search ?? "";
-    const statusString = (status == "All" || status == null) ? "" : `&status=${status}`
+    const statusString = (status === "All" || status === null) ? "" : `&status=${status}`
     const response = await fetch(`${Constant.API_GET_ORDER_BY_SHOP_ID}?id=${shopId}${statusString}&search=${encodeURIComponent(searchDefault)}&isDesc=${isDesc ?? true}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
         headers: Constant.HEADER_TOKEN(token),
     });
@@ -16,9 +16,17 @@ export const ApiGetOrderById = async (orderId, token) => {
     return Constant.ResponseData(response);
 }
 
+export const ApiGetOrdersInTimeForShop = async (shopId, status, dateFrom, dateTo, isDesc, pageIndex, pageSize, token) => {
+    const params = new URLSearchParams({status, dateFrom, dateTo, isDesc, pageIndex, pageSize});
+    const response = await fetch(`${Constant.API_GET_ORDERS_IN_TIME_FOR_SHOP}${shopId}?${params.toString()}`, {
+        headers: Constant.HEADER_TOKEN(token),
+    });
+    return Constant.ResponseData(response);
+}
+
 export const ApiGetListOrders = async (status, search, isDesc, pageIndex, pageSize, token) => {
     const searchDefault = search ?? "";
-    const statusString = (status == "All" || status == null) ? "" : `status=${status}&`
+    const statusString = (status === "All" || status === null) ? "" : `status=${status}&`
     const response = await fetch(`${Constant.API_GET_LIST_ORDERS}?${statusString}search=${encodeURIComponent(searchDefault)}&isDesc=${isDesc ?? true}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
         headers: Constant.HEADER_TOKEN(token),
     });

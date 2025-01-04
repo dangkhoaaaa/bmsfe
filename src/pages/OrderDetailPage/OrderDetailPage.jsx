@@ -18,7 +18,7 @@ import {
 import { ApiChangeOrderStatus, ApiGetOrderById } from '../../services/OrderServices';
 import { useLocation } from 'react-router-dom';
 import { StyledPaper } from '../OrderPage/ManageOrders.style';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { QRCodeCanvas } from 'qrcode.react';
 import { io } from 'socket.io-client';
@@ -44,6 +44,27 @@ const OrderDetailPage = () => {
   };
   const [openAlert, setOpenAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirmPayment = async () => {
+    // Xử lý logic khi xác nhận đã thu tiền
+    const result = await ApiChangeOrderStatus(status, orderId, token);
+    if (result.ok) {
+      toast.success("Updated order status successfully!!!");
+      fetchApiGetOrderById();
+    } else {
+      toast.error(result.message);
+    }
+  };
+
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -56,8 +77,6 @@ const OrderDetailPage = () => {
   };
 
   const handleUpdateStatus = () => {
-   // setMessageAlert('Order Status updated successfully!'); // Đặt thông báo
-   // setOpenAlert(true); // Mở Snackbar
     fetchUpdateOrderStatus();
   };
 
@@ -93,10 +112,12 @@ const OrderDetailPage = () => {
 
   const fetchUpdateOrderStatus = async () => {
     const token = localStorage.getItem('token');
+    if (status == "COMPLETE" && !order.isPayed) {
+      handleOpenDialog();
+      return;
+    }
     const result = await ApiChangeOrderStatus(status, orderId, token);
     if (result.ok) {
-    //  setMessageAlert("Updated order status successfully!");
-      //setOpenAlert(true);
       toast.success("Updated order status successfully!!!");
       fetchApiGetOrderById();
     } else {
@@ -179,9 +200,14 @@ const OrderDetailPage = () => {
                   <Typography variant="body2" color="textSecondary">
                     <span className='text-dark fw-bold'>Order Date:</span> {new Date(order.orderDate).toLocaleString()}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
+                  <Typography variant="body2" color="textSecondary" className='mb-3'>
                     <span className='text-dark fw-bold'>Status:</span> {order.status}
                   </Typography>
+                  {order.isPayed && (
+                    <Button variant='contained' color='success' >Payment completed</Button>
+                  ) || (
+                      <Button variant='outlined' color='error' >Outstanding</Button>
+                    )}
                 </div>
               </div>
               <div className='d-flex col-12 col-sm-12 col-md-12 col-lg-6'>
@@ -247,8 +273,8 @@ const OrderDetailPage = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          {shopId && shopId !== "" && ( 
-            
+          {shopId && shopId !== "" && (
+
             <Box sx={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
               <FormControl sx={{ minWidth: 200 }}>
                 <InputLabel>Status</InputLabel>
@@ -361,8 +387,32 @@ const OrderDetailPage = () => {
         </Alert>
       </Snackbar>
       <ToastContainer />
+      <ConfirmPaymentDialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onConfirm={handleConfirmPayment}
+      />
     </StyledPaper>
   );
 };
+
+function ConfirmPaymentDialog({ open, onClose, onConfirm }) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Confirm payment received</DialogTitle>
+      <DialogContent>
+        <p>Have you received the payment from the customer?</p>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Hủy
+        </Button>
+        <Button onClick={() => { onConfirm(); onClose(); }} color="primary">
+          Xác nhận
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 
 export default OrderDetailPage;

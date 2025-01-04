@@ -62,6 +62,7 @@ const Sidebar = () => {
       { text: "ShopOverview", icon: <FaCog />, path: "/shopOverview" },
       { text: "Category", icon: <FaListAlt />, path: "/category" },
       { text: "Feedback", icon: <FaComments />, path: "/feedback" },
+      { text: "Student Confirm", icon: <FaComments />, path: "/student-confirm" },
       {
         text: "Shop Application",
         icon: <FaListAlt />,
@@ -76,6 +77,7 @@ const Sidebar = () => {
   } else if (user && user.role && user.role.includes("Shop")) {
     sidebarItems = [
       { text: "Dashboard", icon: <PortraitIcon />, path: "/shop/dashboard" },
+      { text: "Morning Prep List", icon: <RestaurantMenuIcon />, path: "/shop/prep-list" },
       { text: "Coupon", icon: <ConfirmationNumberIcon />, path: "/shop/coupon-page" },
       { text: "Breakfast-Menu", icon: <RestaurantMenuIcon />, path: "/shop/menu" },
       { text: "Shop Package", icon: <BalanceIcon />, path: "/shop/package" },

@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import HomeStaff from "./pages/HomeStaff/HomeStaff.js";
 import Category from "./pages/Category/Category.js";
 import Feedback from "./pages/Feedback/Feedback.js";
 import SendFeedbackPage from "./pages/Feedback/SendFeedbackPage.js";
@@ -22,7 +21,6 @@ import LoginPage from "./pages/LoginPage/index.jsx";
 import RegisterPage from "./pages/RegisterPage/index.jsx";
 import ProtectedRoute from "./ProtectedRoute.js";
 import MainLayout from "./components/MainLayout/index.jsx";
-import ShopPage from "./pages/ShopPage/index.jsx"; // Sửa tên chính xác
 import ProfilePage from "./pages/ProfilePage/index.jsx";
 import FeedbackPage from "./pages/FeedbackPage/FeedbackPage.jsx";
 import CouponPage from "./pages/CouponPage/CouponPage.jsx";
@@ -49,6 +47,9 @@ import ProductApplication from "./pages/ProductApplication/ProductApplication.js
 import DetailShopApplication from "./pages/ProductApplication/DetailProductApplication.js";
 import DashboardShop from "./pages/DashboardShop/index.jsx";
 import ShopOperatingHours from "./pages/ShopOperatingHours/index.jsx";
+import ShopPrepList from "./pages/ShopPrepList/index.jsx";
+import StaffStudentConfirm from "./pages/StaffStudentConfirm/index.jsx";
+import ShopWallet from "./pages/ShopWallet/index.jsx";
 
 function App() {
   return (
@@ -124,7 +125,14 @@ function App() {
               path="/shop/operating-hours"
               element={<ProtectedRoute element={<ShopOperatingHours />} requiredRole={"Shop"} />}
             />
-            
+            <Route
+              path="/shop/prep-list"
+              element={<ProtectedRoute element={<ShopPrepList />} requiredRole={"Shop"} />}
+            />
+            <Route
+              path="/shop/wallet"
+              element={<ProtectedRoute element={<ShopWallet />} requiredRole={"Shop"} />}
+            />
             <Route
               path="/shop/coupon-page"
               element={<ProtectedRoute element={<CouponPage />} requiredRole={"Shop"} />}
@@ -158,7 +166,7 @@ function App() {
               element={<ProtectedRoute element={<AddProduct />} requiredRole={"Shop"} />} // Add route for AddProduct
             />
 
-<Route
+            <Route
               path="/shop/location"
               element={
                 <ProtectedRoute
@@ -169,8 +177,8 @@ function App() {
             />
           </Route>
 
- {/* Staff Routes */}
- <Route element={<MainLayout />} path="/">
+          {/* Staff Routes */}
+          <Route element={<MainLayout />} path="/">
             <Route
               path="/category"
               element={
@@ -229,6 +237,15 @@ function App() {
               }
             />
             <Route
+              path="/student-confirm"
+              element={
+                <ProtectedRoute
+                  element={<StaffStudentConfirm />}
+                  requiredRole={"Staff"}
+                />
+              }
+            />
+            <Route
               path="/detail-application/:id"
               element={
                 <ProtectedRoute
@@ -237,7 +254,7 @@ function App() {
                 />
               }
             />
-               <Route
+            <Route
               path="/detail-product-application/:id"
               element={
                 <ProtectedRoute
@@ -255,7 +272,7 @@ function App() {
                 />
               }
             />
-            
+
             <Route
               path="/shopOverview"
               element={
@@ -299,7 +316,7 @@ function App() {
                 />
               }
             />
-            
+
             <Route
               path="/profile"
               element={
@@ -309,7 +326,7 @@ function App() {
                 />
               }
             />
-                <Route
+            <Route
               path="/productApplication"
               element={
                 <ProtectedRoute

@@ -45,3 +45,8 @@
 .notification-item:hover {
   background-color: #a5d6a4; /* Màu nền khi hover */
 }
+
+.text-underline-hv:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -127,8 +127,8 @@ const AddProductPage = () => {
             <ToastContainer />
             <Card>
                 <CardContent>
-                    <Typography variant="h4" gutterBottom>
-                        New Product Entry
+                    <Typography variant="h4" gutterBottom sx={{ textAlign: 'center' }}>
+                        New Product
                     </Typography>
                     {successMessage && (
                         <Typography color="success.main" gutterBottom>

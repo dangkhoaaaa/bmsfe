@@ -17,6 +17,7 @@ export default function Header() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [notis, setNotis] = useState([]);
     const token = localStorage.getItem('token');
+    const shopId = localStorage.getItem('shopId');
     const decoded = jwtDecode(token);
     const navigate = useNavigate();
     const socket = io(HTTP_SOCKET_SERVER);
@@ -28,6 +29,9 @@ export default function Header() {
     };
 
     const fetchWallet = async () => {
+        if (!shopId) {
+            return;
+        }
         const result = await ApiGetWalletByUser(token);
         if (result.ok) {
             setWallet(result.body.data);
@@ -116,6 +120,10 @@ export default function Header() {
         navigate(`/shop/orders/detail?orderId=${id}`);
     };
 
+    const handleClickWallet = () => {
+        navigate(`/shop/wallet`);
+    }
+
     return (
         <div
             className='w-100 bg-success d-flex justify-content-between align-items-center'
@@ -139,7 +147,7 @@ export default function Header() {
                 </span>
             </div>
             <div className='d-flex align-items-center'>
-                <span className='text-light mx-3'>{new Intl.NumberFormat('vi-VN', {
+                <span className='text-light mx-3 text-underline-hv' onClick={handleClickWallet}>{new Intl.NumberFormat('vi-VN', {
                       style: 'currency',
                       currency: 'VND',
                     }).format(wallet && wallet.balance)}</span>
