@@ -50,294 +50,303 @@ import ShopOperatingHours from "./pages/ShopOperatingHours/index.jsx";
 import ShopPrepList from "./pages/ShopPrepList/index.jsx";
 import StaffStudentConfirm from "./pages/StaffStudentConfirm/index.jsx";
 import ShopWallet from "./pages/ShopWallet/index.jsx";
+import ShopReport from "./pages/ShopReport/index.jsx";
+import { WalletProvider } from "./context/WalletProvider.js";
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/join-shop" element={<ShopRegister />} />
+      <WalletProvider>
 
-          {/* Admin Routes */}
-          <Route element={<MainLayout />} path="/admin">
-            <Route
-              path="/admin"
-              element={<ProtectedRoute element={<DashboardPage />} requiredRole={"Admin"} />}
-            />
-            <Route
-              path="/admin/manage-staff"
-              element={<ProtectedRoute element={<StaffPage />} requiredRole={"Admin"} />}
-            />
-            <Route
-              path="/admin/customer-details"
-              element={<ProtectedRoute element={<UserDetails />} requiredRole={"Admin"} />}
-            />
-            <Route
-              path="/admin/package"
-              element={<ProtectedRoute element={<PackageAdmin />} requiredRole={"Admin"} />}
-            />
-            <Route
-              path="/admin/orders"
-              element={<ProtectedRoute element={<OrdersPage />} requiredRole={"Admin"} />}
-            />
-            <Route
-              path="/admin/profile"
-              element={<ProtectedRoute element={<ProfilePage />} requiredRole={"Admin"} />}
-            />
-            <Route
-              path="/admin/feedback"
-              element={<ProtectedRoute element={<FeedbackPage />} requiredRole={"Admin"} />}
-            />
-          </Route>
+        <Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/join-shop" element={<ShopRegister />} />
 
-          {/* Shop Routes */}
-          <Route element={<MainLayout />} path="/shop">
-            <Route
-              path="/shop"
-              element={<ProtectedRoute element={<ShopPackagePage />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/package"
-              element={<ProtectedRoute element={<ShopPackagePage />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/dashboard"
-              element={<ProtectedRoute element={<DashboardShop />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/package/payment"
-              element={<ProtectedRoute element={<PackagePayment />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/package/payment/return"
-              element={<ProtectedRoute element={<PackagePaymentReturn />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/feedback-shop"
-              element={<ProtectedRoute element={<FeedBackShop />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/operating-hours"
-              element={<ProtectedRoute element={<ShopOperatingHours />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/prep-list"
-              element={<ProtectedRoute element={<ShopPrepList />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/wallet"
-              element={<ProtectedRoute element={<ShopWallet />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/coupon-page"
-              element={<ProtectedRoute element={<CouponPage />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/add-Coupon"
-              element={<ProtectedRoute element={<AddCoupon />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/orders"
-              element={<ProtectedRoute element={<OrderShop />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/orders/detail"
-              element={<ProtectedRoute element={<OrderDetailPage />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/profile"
-              element={<ProtectedRoute element={<ProfilePage />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/about-shop"
-              element={<ProtectedRoute element={<ShopProfile />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/menu"
-              element={<ProtectedRoute element={<ProductPage />} requiredRole={"Shop"} />}
-            />
-            <Route
-              path="/shop/add-product"
-              element={<ProtectedRoute element={<AddProduct />} requiredRole={"Shop"} />} // Add route for AddProduct
-            />
+            {/* Admin Routes */}
+            <Route element={<MainLayout />} path="/admin">
+              <Route
+                path="/admin"
+                element={<ProtectedRoute element={<DashboardPage />} requiredRole={"Admin"} />}
+              />
+              <Route
+                path="/admin/manage-staff"
+                element={<ProtectedRoute element={<StaffPage />} requiredRole={"Admin"} />}
+              />
+              <Route
+                path="/admin/customer-details"
+                element={<ProtectedRoute element={<UserDetails />} requiredRole={"Admin"} />}
+              />
+              <Route
+                path="/admin/package"
+                element={<ProtectedRoute element={<PackageAdmin />} requiredRole={"Admin"} />}
+              />
+              <Route
+                path="/admin/orders"
+                element={<ProtectedRoute element={<OrdersPage />} requiredRole={"Admin"} />}
+              />
+              <Route
+                path="/admin/profile"
+                element={<ProtectedRoute element={<ProfilePage />} requiredRole={"Admin"} />}
+              />
+              <Route
+                path="/admin/feedback"
+                element={<ProtectedRoute element={<FeedbackPage />} requiredRole={"Admin"} />}
+              />
+            </Route>
 
-            <Route
-              path="/shop/location"
-              element={
-                <ProtectedRoute
-                  element={<ShopLocation />}
-                  requiredRole={"Shop"}
-                />
-              } // Add route for AddProduct
-            />
-          </Route>
+            {/* Shop Routes */}
+            <Route element={<MainLayout />} path="/shop">
+              <Route
+                path="/shop"
+                element={<ProtectedRoute element={<ShopPackagePage />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/package"
+                element={<ProtectedRoute element={<ShopPackagePage />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/dashboard"
+                element={<ProtectedRoute element={<DashboardShop />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/package/payment"
+                element={<ProtectedRoute element={<PackagePayment />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/package/payment/return"
+                element={<ProtectedRoute element={<PackagePaymentReturn />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/feedback-shop"
+                element={<ProtectedRoute element={<FeedBackShop />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/operating-hours"
+                element={<ProtectedRoute element={<ShopOperatingHours />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/prep-list"
+                element={<ProtectedRoute element={<ShopPrepList />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/wallet"
+                element={<ProtectedRoute element={<ShopWallet />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/report"
+                element={<ProtectedRoute element={<ShopReport />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/coupon-page"
+                element={<ProtectedRoute element={<CouponPage />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/add-Coupon"
+                element={<ProtectedRoute element={<AddCoupon />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/orders"
+                element={<ProtectedRoute element={<OrderShop />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/orders/detail"
+                element={<ProtectedRoute element={<OrderDetailPage />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/profile"
+                element={<ProtectedRoute element={<ProfilePage />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/about-shop"
+                element={<ProtectedRoute element={<ShopProfile />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/menu"
+                element={<ProtectedRoute element={<ProductPage />} requiredRole={"Shop"} />}
+              />
+              <Route
+                path="/shop/add-product"
+                element={<ProtectedRoute element={<AddProduct />} requiredRole={"Shop"} />} // Add route for AddProduct
+              />
 
-          {/* Staff Routes */}
-          <Route element={<MainLayout />} path="/">
-            <Route
-              path="/category"
-              element={
-                <ProtectedRoute element={<Category />} requiredRole={"Staff"} />
-              }
-            />
-            <Route
-              path="/feedback"
-              element={
-                <ProtectedRoute element={<Feedback />} requiredRole={"Staff"} />
-              }
-            />
-            <Route
-              path="/send-feedback"
-              element={
-                <ProtectedRoute
-                  element={<SendFeedbackPage />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/shop-details"
-              element={
-                <ProtectedRoute
-                  element={<ShopDetails />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/edit-category/:id/:name/:description"
-              element={
-                <ProtectedRoute
-                  element={<EditCategory />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/add-category"
-              element={
-                <ProtectedRoute
-                  element={<AddCategory />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/shop-application"
-              element={
-                <ProtectedRoute
-                  element={<ShopApplication />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/student-confirm"
-              element={
-                <ProtectedRoute
-                  element={<StaffStudentConfirm />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/detail-application/:id"
-              element={
-                <ProtectedRoute
-                  element={<DetailApplication />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/detail-product-application/:id"
-              element={
-                <ProtectedRoute
-                  element={<DetailShopApplication />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/shop-details/:id"
-              element={
-                <ProtectedRoute
-                  element={<ShopDetail />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
+              <Route
+                path="/shop/location"
+                element={
+                  <ProtectedRoute
+                    element={<ShopLocation />}
+                    requiredRole={"Shop"}
+                  />
+                } // Add route for AddProduct
+              />
+            </Route>
 
-            <Route
-              path="/shopOverview"
-              element={
-                <ProtectedRoute
-                  element={<ShopOverview />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/notificationManagement"
-              element={
-                <ProtectedRoute
-                  element={<NotificationManagement />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/user-information/:userId"
-              element={
-                <ProtectedRoute
-                  element={<UserDetail />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/user-list"
-              element={
-                <ProtectedRoute element={<UserList />} requiredRole={"Staff"} />
-              }
-            />
+            {/* Staff Routes */}
+            <Route element={<MainLayout />} path="/">
+              <Route
+                path="/category"
+                element={
+                  <ProtectedRoute element={<Category />} requiredRole={"Staff"} />
+                }
+              />
+              <Route
+                path="/feedback"
+                element={
+                  <ProtectedRoute element={<Feedback />} requiredRole={"Staff"} />
+                }
+              />
+              <Route
+                path="/send-feedback"
+                element={
+                  <ProtectedRoute
+                    element={<SendFeedbackPage />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/shop-details"
+                element={
+                  <ProtectedRoute
+                    element={<ShopDetails />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/edit-category/:id/:name/:description"
+                element={
+                  <ProtectedRoute
+                    element={<EditCategory />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/add-category"
+                element={
+                  <ProtectedRoute
+                    element={<AddCategory />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/shop-application"
+                element={
+                  <ProtectedRoute
+                    element={<ShopApplication />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/student-confirm"
+                element={
+                  <ProtectedRoute
+                    element={<StaffStudentConfirm />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/detail-application/:id"
+                element={
+                  <ProtectedRoute
+                    element={<DetailApplication />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/detail-product-application/:id"
+                element={
+                  <ProtectedRoute
+                    element={<DetailShopApplication />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/shop-details/:id"
+                element={
+                  <ProtectedRoute
+                    element={<ShopDetail />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
 
-            <Route
-              path="/dashboardStaff"
-              element={
-                <ProtectedRoute
-                  element={<DashboardStaff />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
+              <Route
+                path="/shopOverview"
+                element={
+                  <ProtectedRoute
+                    element={<ShopOverview />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/notificationManagement"
+                element={
+                  <ProtectedRoute
+                    element={<NotificationManagement />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/user-information/:userId"
+                element={
+                  <ProtectedRoute
+                    element={<UserDetail />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/user-list"
+                element={
+                  <ProtectedRoute element={<UserList />} requiredRole={"Staff"} />
+                }
+              />
 
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute
-                  element={<ProfilePage />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-            <Route
-              path="/productApplication"
-              element={
-                <ProtectedRoute
-                  element={<ProductApplication />}
-                  requiredRole={"Staff"}
-                />
-              }
-            />
-          </Route>
-        </Routes>
-      </Router>
+              <Route
+                path="/dashboardStaff"
+                element={
+                  <ProtectedRoute
+                    element={<DashboardStaff />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute
+                    element={<ProfilePage />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+              <Route
+                path="/productApplication"
+                element={
+                  <ProtectedRoute
+                    element={<ProductApplication />}
+                    requiredRole={"Staff"}
+                  />
+                }
+              />
+            </Route>
+          </Routes>
+        </Router>
+      </WalletProvider>
     </AuthProvider>
   );
 }

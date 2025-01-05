@@ -9,7 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { io } from 'socket.io-client';
 import { HTTP_SOCKET_SERVER } from '../../constants/Constant';
 import { ApiGetWalletByUser } from '../../services/WalletServices';
-
+import { useWallet } from '../../context/WalletProvider';
 dayjs.extend(relativeTime);
 
 export default function Header() {
@@ -21,29 +21,16 @@ export default function Header() {
     const decoded = jwtDecode(token);
     const navigate = useNavigate();
     const socket = io(HTTP_SOCKET_SERVER);
-    const [wallet, setWallet] = useState(null);
+    const { wallet, fetchWallet } = useWallet();
 
     const handleNotificationClick = async (event) => {
         setAnchorEl(event.currentTarget);
         await fetchNotiByRole();
     };
 
-    const fetchWallet = async () => {
-        if (!shopId) {
-            return;
-        }
-        const result = await ApiGetWalletByUser(token);
-        if (result.ok) {
-            setWallet(result.body.data);
-        } else {
-            alert(result.message);
-        }
-    }
-
     useEffect(() => {
-        fetchCountNotiByRole();
         fetchWallet();
-
+        fetchCountNotiByRole();
         socket.on('connect', () => {
             console.log('Connected to server with socket ID:', socket.id);
         });

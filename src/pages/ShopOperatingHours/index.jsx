@@ -50,13 +50,13 @@ export default function ShopOperatingHours() {
 
   const getDayName = (dayIndex) => {
     switch (dayIndex) {
-      case 1: return 'monday';
-      case 2: return 'tuesday';
-      case 3: return 'wednesday';
-      case 4: return 'thursday';
-      case 5: return 'friday';
-      case 6: return 'saturday';
-      case 7: return 'sunday';
+      case 2: return 'monday';
+      case 3: return 'tuesday';
+      case 4: return 'wednesday';
+      case 5: return 'thursday';
+      case 6: return 'friday';
+      case 7: return 'saturday';
+      case 1: return 'sunday';
       default: return '';
     }
   };
@@ -99,13 +99,13 @@ export default function ShopOperatingHours() {
 
   const convertToListOpeningHours = (operatingHours) => {
     const daysMapping = {
-      monday: 1,
-      tuesday: 2,
-      wednesday: 3,
-      thursday: 4,
-      friday: 5,
-      saturday: 6,
-      sunday: 7,
+      monday: 2,
+      tuesday: 3,
+      wednesday: 4,
+      thursday: 5,
+      friday: 6,
+      saturday: 7,
+      sunday: 1,
     };
   
     return Object.keys(operatingHours).map((day) => {
@@ -145,7 +145,7 @@ export default function ShopOperatingHours() {
         Adjust Shop Operating Hours
       </Typography>
       <Grid container spacing={3}>
-        {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+        {['sunday','monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => (
           <Grid item xs={12} md={6} key={day}>
             <Typography variant="h6" color='success'>
               {day.charAt(0).toUpperCase() + day.slice(1)}

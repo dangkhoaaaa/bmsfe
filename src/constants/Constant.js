@@ -3,6 +3,7 @@ import { GetMessageError } from "../utils/StringUtils";
 /*
  ** HTTP CONFIG
  */
+export const HTTP_WED_DOMAIN = "https://bms1dl-ujj3.vercel.app";
 export const HTTP_SERVER = "https://bms-fs-api.azurewebsites.net";
 export const HTTP_SOCKET_SERVER = "https://bms-socket.onrender.com";
 
@@ -197,10 +198,17 @@ export const API_GET_TOP_5_USER_PURCHARSE = HTTP_SERVER + "/api/Transaction/GetT
  */
 export const API_GET_WALLET_BY_TOKEN = HTTP_SERVER + "/api/Wallet/GetWalletByUserId";
 export const API_GET_ALL_TRANSACTION_WALLET_OF_USER = HTTP_SERVER + "/api/Wallet/GetAllTransactionOfUserWallet";
+export const API_USER_DEPOSIT = HTTP_SERVER + "/api/Payment/create-payment-url-fordeposit";
+export const API_UPDATE_BALANCE = HTTP_SERVER + "/api/Wallet/UpdateBalance";
 
 /*
  ** API STUDENT
  */
- export const API_GET_STUDENT_CONFIRM_LIST = HTTP_SERVER + "/api/StudentApplication";
- export const API_CHANGE_STATUS_STUDENT = HTTP_SERVER + "/api/StudentApplication/";
+export const API_GET_STUDENT_CONFIRM_LIST = HTTP_SERVER + "/api/StudentApplication";
+export const API_CHANGE_STATUS_STUDENT = HTTP_SERVER + "/api/StudentApplication/";
+
+/*
+** API REPORT
+*/
+export const API_GET_REPORT_FOR_SHOP = HTTP_SERVER + "/api/ShopWeeklyReport/GetAllShopWeeklyReport";
 

@@ -84,7 +84,7 @@ export const ApiCreatePaymentVNPayURL = async (shopId, packageId, fullName, pack
             orderType: "Package",
             description: packageName,
             amount: packagePrice,
-            returnUrl: `https://bmsfe.vercel.app/shop/package/payment/return?packageId=${packageId}`,
+            returnUrl: `${Constant.HTTP_WED_DOMAIN}/shop/package/payment/return?packageId=${packageId}`,
         }),
     });
     return Constant.ResponseData(response);

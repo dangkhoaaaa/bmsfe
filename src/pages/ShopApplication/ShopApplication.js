@@ -21,7 +21,7 @@ const ShopApplication = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://bms-fs-api.azurewebsites.net/api/ShopApplication?status=1&pageIndex=${currentPage}&pageSize=${shopsPerPage}&search=${encodeURIComponent(
+          `https://bms-fs-api.azurewebsites.net/api/ShopApplication?isDesc=true&status=1&pageIndex=${currentPage}&pageSize=${shopsPerPage}&search=${encodeURIComponent(
             searchTerm
           )}`
         );

@@ -405,10 +405,10 @@ function ConfirmPaymentDialog({ open, onClose, onConfirm }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
-          Hủy
+          Cancel
         </Button>
         <Button onClick={() => { onConfirm(); onClose(); }} color="primary">
-          Xác nhận
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>

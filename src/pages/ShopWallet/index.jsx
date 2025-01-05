@@ -1,17 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ApiGetAllTransactionWallet } from '../../services/WalletServices';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Paper, Box, Typography, Tooltip } from '@mui/material';
-import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { ApiGetAllTransactionWallet, ApiCreateLinkUserDeposit, ApiUpdateBalance } from '../../services/WalletServices';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Paper,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Chip,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
+} from '@mui/material';
+import { ArrowDownward, ArrowUpward, AttachMoney, AccountBalanceWallet } from '@mui/icons-material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useWallet } from '../../context/WalletProvider';
 
 export default function ShopWallet() {
+  const {wallet, fetchWallet} = useWallet();
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [amount, setAmount] = useState(''); // Amount for deposit/withdraw
+  const [paymentMethod, setPaymentMethod] = useState('VNPay'); // Payment method selection
   const shopId = localStorage.getItem('shopId');
   const token = localStorage.getItem('token');
-
+  const [openDialog, setOpenDialog] = useState(false);
+  const STATUS_WITHDRA = 6;
   const statusMap = {
     1: 'PAID',
     2: 'PAIDTOSHOP',
@@ -20,6 +50,14 @@ export default function ShopWallet() {
     5: 'DEPOSIT',
     6: 'WITHDRAW',
     7: 'PAIDPACKAGE'
+  };
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const fetchTransactionByUserToken = async () => {
@@ -44,12 +82,115 @@ export default function ShopWallet() {
     setPage(0);
   };
 
+  const handleAmountChange = (event) => {
+    setAmount(event.target.value);
+  };
+
+  const handlePaymentMethodChange = (event) => {
+    setPaymentMethod(event.target.value);
+  };
+
+  const handleDeposit = async () => {
+    // Call the API to deposit money
+    if (amount >= 1000) {
+      const result = await ApiCreateLinkUserDeposit(shopId, amount, token);
+      if (result.ok) {
+        window.location.href = result.body.data;
+      } else {
+        alert(result.message);
+      }
+    } else {
+      alert("Please enter a valid money more than 1000 VND!");
+    }
+  };
+
+  const handleWithdraw = () => {
+    // Call the API to deposit money
+    if (amount >= 1000) {
+      handleOpenDialog();
+    }
+  };
+
+  const handleConfirmWithDraw = async () => {
+    const result = await ApiUpdateBalance(amount, STATUS_WITHDRA, token);
+    if (result.ok) {
+      toast.success(`Successfully withdrew ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)}.`);
+      fetchWallet();
+      fetchTransactionByUserToken();
+    } else {
+      toast.error(result.message);
+    }
+  }
+
+  const quickAmounts = [50000, 100000, 200000, 500000, 1000000];
+
   return (
     <>
       <Box sx={{ padding: 3, backgroundColor: '#f4f4f9', minHeight: '100vh' }}>
+
+        {/* Wallet Deposit Section */}
+        <Box sx={{ marginBottom: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Deposit or Withdraw Money from Your Wallet
+          </Typography>
+          <TextField
+            label="Amount"
+            value={amount}
+            onChange={handleAmountChange}
+            type="number"
+            fullWidth
+            sx={{ marginBottom: 2 }}
+          />
+
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', marginBottom: 2 }}>
+            {quickAmounts.map((amt) => (
+              <Chip
+                key={amt}
+                label={`${amt.toLocaleString()} VND`}
+                onClick={() => setAmount(amt)}
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <InputLabel>Payment Method</InputLabel>
+            <Select value={paymentMethod} onChange={handlePaymentMethodChange} label="Payment Method">
+              <MenuItem value="VNPay">VNPay</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Box sx={{ marginBottom: 3, display: 'flex', gap: 2, justifyContent: 'flex-start' }}>
+            {/* Deposit Button */}
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleDeposit}
+              sx={{ minWidth: 150 }}
+              startIcon={<AttachMoney />}
+            >
+              Deposit
+            </Button>
+
+            {/* Withdraw Button */}
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={handleWithdraw}
+              sx={{ minWidth: 150 }}
+              startIcon={<AccountBalanceWallet />}
+            >
+              Withdraw
+            </Button>
+          </Box>
+        </Box>
+
         <Typography variant="h4" align="center" gutterBottom>
           Shop Wallet Transaction History
         </Typography>
+
+        {/* Transaction History Table */}
         <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
           <Table aria-label="transaction history">
             <TableHead sx={{ backgroundColor: 'green' }}>
@@ -100,6 +241,13 @@ export default function ShopWallet() {
           sx={{ marginTop: 2 }}
         />
       </Box>
+      <ToastContainer />
+      <ConfirmWithdrawDialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        onConfirm={handleConfirmWithDraw}
+        amount={amount}
+      />
     </>
   );
 }
@@ -117,3 +265,22 @@ const getStatusColor = (status) => {
     default: return '#9e9e9e'; // Unknown
   }
 };
+
+function ConfirmWithdrawDialog({ open, onClose, onConfirm, amount }) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Confirm</DialogTitle>
+      <DialogContent>
+        <p>Are you sure you want to withdraw {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)}?</p>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={() => { onConfirm(); onClose(); }} color="primary">
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}

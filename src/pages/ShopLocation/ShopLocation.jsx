@@ -42,7 +42,6 @@ const ShopLocation = () => {
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-
         }).addTo(map);
 
         // Tạo icon tùy chỉnh với hình ảnh từ shopDetails
@@ -87,7 +86,7 @@ const ShopLocation = () => {
       <h1>{shopDetails.name}</h1>
       <div
         ref={mapRef}
-        style={{ height: '400px', width: '100%' }}
+        style={{ height: '600px', width: '100%' }}
       />
     </div>
   );

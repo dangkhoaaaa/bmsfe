@@ -120,7 +120,9 @@ export default function StaffStudentConfirm() {
             </Grid>
             <Grid item xs={12} sm={8}>
               <Typography variant="h6">Student ID: {student.studentId}</Typography>
-              <Typography variant="body1">User ID: {student.userId}</Typography> {/* Hiển thị userId */}
+              <Typography variant="body1">User ID: {student.userId}</Typography>
+              <Typography variant="body1">First Name: {student.user.firstName}</Typography>
+              <Typography variant="body1">Last Name: {student.user.lastName}</Typography>
               <Typography variant="body1">University: {student.university.name}</Typography>
               {student.statusStudent === STATUS_ACCEPTED && (
                 <Button
@@ -160,7 +162,6 @@ export default function StaffStudentConfirm() {
                     </Button>
                   </div>
                 )}
-
             </Grid>
           </Grid>
         </Paper>
@@ -168,8 +169,8 @@ export default function StaffStudentConfirm() {
 
       {/* Phân trang */}
       <Pagination
-        count={Math.ceil(students.length / studentsPerPage)} // Cập nhật count cho phân trang
-        page={currentPage}  // Sửa lại thành currentPage
+        count={Math.ceil(students.length / studentsPerPage)}
+        page={currentPage}
         onChange={handlePageChange}
         color="primary"
         sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}
@@ -191,8 +192,8 @@ export default function StaffStudentConfirm() {
         </DialogActions>
       </Dialog>
 
-       {/* Modal Loading */}
-       <Dialog open={loading} disableEscapeKeyDown>
+      {/* Modal Loading */}
+      <Dialog open={loading} disableEscapeKeyDown>
         <DialogContent sx={{ textAlign: 'center' }}>
           <CircularProgress />
           <Typography variant="h6" sx={{ mt: 2 }}>

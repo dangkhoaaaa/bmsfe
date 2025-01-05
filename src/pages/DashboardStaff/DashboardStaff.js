@@ -184,13 +184,6 @@ const DashboardStaff = () => {
         borderWidth: 1,
       },
       {
-        label: "Orders",
-        data: ordersData,
-        backgroundColor: "#66bb6a",
-        borderColor: "#43a047",
-        borderWidth: 1,
-      },
-      {
         label: "Revenue (x1000 VND)",
         data: revenueData.map((r) => r / 1000), // Divide by 1000 to display in thousands
         backgroundColor: "#ffa726",

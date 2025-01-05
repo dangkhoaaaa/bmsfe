@@ -34,7 +34,8 @@ import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import AuthContext from "../../auth/AuthContext";
 import BalanceIcon from "@mui/icons-material/Balance";
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone";
-
+import ChecklistIcon from '@mui/icons-material/Checklist';
+import BarChartIcon from '@mui/icons-material/BarChart';
 const drawerWidth = 240;
 
 const Sidebar = () => {
@@ -53,7 +54,7 @@ const Sidebar = () => {
     { text: 'Profile', icon: <PortraitIcon />, path: "/admin/profile" },
   ];
 
-  
+
 
   // Ensure user and user.role are defined before using them
   if (user && user.role && user.role.includes("Staff")) {
@@ -77,7 +78,8 @@ const Sidebar = () => {
   } else if (user && user.role && user.role.includes("Shop")) {
     sidebarItems = [
       { text: "Dashboard", icon: <PortraitIcon />, path: "/shop/dashboard" },
-      { text: "Morning Prep List", icon: <RestaurantMenuIcon />, path: "/shop/prep-list" },
+      { text: "Morning Prep List", icon: <ChecklistIcon />, path: "/shop/prep-list" },
+      { text: "Monthly Report", icon: <BarChartIcon />, path: "/shop/report" },
       { text: "Coupon", icon: <ConfirmationNumberIcon />, path: "/shop/coupon-page" },
       { text: "Breakfast-Menu", icon: <RestaurantMenuIcon />, path: "/shop/menu" },
       { text: "Shop Package", icon: <BalanceIcon />, path: "/shop/package" },
@@ -141,7 +143,7 @@ const Sidebar = () => {
         <Typography
           variant="h6"
           sx={{ flexGrow: 1 }}
-        
+
           style={{ cursor: "pointer" }}
         >
           {user?.role || "User"} {/* Dynamically display the role */}

@@ -19,6 +19,10 @@ const DetailApplication = () => {
   const [lng, setLng] = useState(shop ? shop.lng : "");
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
+  const [toHour, setToHour] = useState(shop ? shop.to_Hour : "");
+  const [fromHour, setFromHour] = useState(shop ? shop.from_Hour : "");
+  const [toMinute, setToMinute] = useState(shop ? shop.to_Minume : "");
+  const [fromMinute, setFromMinute] = useState(shop ? shop.from_Minume : "");
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -27,6 +31,12 @@ const DetailApplication = () => {
           `https://bms-fs-api.azurewebsites.net/api/ShopApplication/${id}`
         );
         setShop(response.data.data);
+
+        const { to_Hour, from_Hour, to_Minune, from_Minune } = response.data.data;
+        setToHour(to_Hour);
+        setFromHour(from_Hour);
+        setToMinute(to_Minune);
+        setFromMinute(from_Minune);
       } catch (error) {
         console.error("Error fetching shop details:", error);
       } finally {
@@ -119,6 +129,13 @@ const DetailApplication = () => {
     }
   };
 
+  // Function to format time
+  const formatTime = (hour, minute) => {
+    const formattedHour = hour < 10 ? `0${hour}` : hour; // Add leading zero if needed
+    const formattedMinute = minute < 10 ? `0${minute}` : minute; // Add leading zero if needed
+    return `${formattedHour}:${formattedMinute}`;
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -190,6 +207,14 @@ const DetailApplication = () => {
           </div>
           <div className="detail-field">
             <strong>Status:</strong> {shop.status}
+          </div>
+          <div className="detail-field">
+            <strong>Operating Hours: </strong>
+         
+              <span onClick={() => setIsEditing(true)}>
+                {formatTime(fromHour, fromMinute)} - {formatTime(toHour, toMinute)}
+              </span>
+            
           </div>
           {isEditing && (
             <button onClick={updateApplicationDetails} className="submit-btn">Save</button>
