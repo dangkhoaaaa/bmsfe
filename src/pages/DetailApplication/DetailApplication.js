@@ -23,6 +23,7 @@ const DetailApplication = () => {
   const [fromHour, setFromHour] = useState(shop ? shop.from_Hour : "");
   const [toMinute, setToMinute] = useState(shop ? shop.to_Minume : "");
   const [fromMinute, setFromMinute] = useState(shop ? shop.from_Minume : "");
+  const [universities, setUniversities] = useState([]);
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -37,6 +38,12 @@ const DetailApplication = () => {
         setFromHour(from_Hour);
         setToMinute(to_Minune);
         setFromMinute(from_Minune);
+        if (response.data.isSuccess) {
+          const shopData = response.data.data;
+          setShop(shopData);
+          setUniversities(shopData.universities);
+       
+        }
       } catch (error) {
         console.error("Error fetching shop details:", error);
       } finally {
@@ -172,6 +179,16 @@ const DetailApplication = () => {
           </div>
           <div className="detail-field">
             <strong>Email:</strong> {shop.email}
+          </div>
+          <div className="detail-field">
+            <strong>Universities:</strong>
+            <ul>
+              {universities.map((university) => (
+                <li key={university.id}>
+                  {university.name}
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="detail-field">
             <strong>Description:</strong>

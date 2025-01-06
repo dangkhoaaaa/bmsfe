@@ -1,13 +1,12 @@
 import * as Constant from "../constants/Constant"
 
-export const ApiCreateShop = async (email, name, phone, address, description, image, universityId, from_hour, from_minute, to_hour, to_minute) => {
+export const ApiCreateShop = async (email, name, phone, address, description, image, universityIds, from_hour, from_minute, to_hour, to_minute) => {
     const formData = new FormData();
     formData.append("email", email);
     formData.append("address", address);
     formData.append("phone", phone);
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("universityId", universityId);
     formData.append("from_hour", from_hour);
     formData.append("from_minute", from_minute);
     formData.append("to_hour", to_hour);
@@ -16,6 +15,11 @@ export const ApiCreateShop = async (email, name, phone, address, description, im
     if (image) {
         formData.append('image', image);
     }
+    
+    universityIds.forEach(universityId => {
+        formData.append("universityIds[]", universityId);
+    });
+
     const response = await fetch(Constant.AIP_CREATE_SHOP, {
         method: "POST",
         body: formData,

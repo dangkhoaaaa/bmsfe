@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Box, Typography, Avatar, Grid, Link, Autocomplete, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { TextField, Button, Box, Typography, Avatar, Grid, Link, Autocomplete, FormControl, InputLabel, Select, MenuItem, FormHelperText, Checkbox, ListItemText } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +40,7 @@ export default function ShopRegister() {
   const [errors, setErrors] = useState({});
   const [listUniversity, setListUniversity] = useState([]);
   const navigate = useNavigate();
-  const [selectedUniversity, setSelectedUniversity] = useState('');
+  const [selectedUniversities, setSelectedUniversities] = useState([]);
   const [operatingHours, setOperatingHours] = useState({
     open: parse('05:00 AM', 'hh:mm a', new Date()), // 5 AM
     close: parse('12:00 PM', 'hh:mm a', new Date()), // 12 PM
@@ -67,7 +67,10 @@ export default function ShopRegister() {
   }, []);
 
   const handleChangeUniversity = (event) => {
-    setSelectedUniversity(event.target.value);
+    const {
+      target: { value },
+    } = event;
+    setSelectedUniversities(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleChange = (event) => {
@@ -103,7 +106,7 @@ export default function ShopRegister() {
       selectedAddress, 
       data.description, 
       data.avatar, 
-      selectedUniversity, 
+      selectedUniversities,
       openDate.getHours(), 
       openDate.getMinutes(),
       closeDate.getHours(), 
@@ -122,7 +125,7 @@ export default function ShopRegister() {
 
   const isValidateForm = () => {
     const newErrors = {};
-    if (!selectedUniversity) newErrors.university = 'Please select a university.';
+    if (!selectedUniversities.length) newErrors.university = 'Please select at least one university.';
     if (!data.name.trim()) newErrors.name = 'Shop name is required.';
     if (!data.email.trim()) newErrors.email = 'Email is required.';
     if (!data.phone.trim()) newErrors.phone = 'Phone number is required.';
@@ -265,17 +268,24 @@ export default function ShopRegister() {
                 </Grid>
 
                 <FormControl fullWidth sx={{ borderRadius: '30px', marginBlockStart: '14px', paddingInlineStart: '14px' }}>
-                  <InputLabel id="university-select-label" sx={{ paddingInlineStart: '14px' }}>Select a University</InputLabel>
+                  <InputLabel id="university-select-label" sx={{ paddingInlineStart: '14px' }}>Choose University</InputLabel>
                   <Select
                     labelId="university-select-label"
-                    value={selectedUniversity}
+                    multiple
+                    value={selectedUniversities}
                     onChange={handleChangeUniversity}
-                    label="Select a University"
+                    renderValue={(selected) => {
+                      const selectedNames = listUniversity
+                        .filter(university => selected.includes(university.id))
+                        .map(university => university.name);
+                      return selectedNames.join(', ');
+                    }}
                     sx={{ borderRadius: '30px' }}
                   >
                     {listUniversity.map((university, index) => (
                       <MenuItem key={index} value={university.id}>
-                        {university.name}
+                        <Checkbox checked={selectedUniversities.indexOf(university.id) > -1} />
+                        <ListItemText primary={university.name} />
                       </MenuItem>
                     ))}
                   </Select>
