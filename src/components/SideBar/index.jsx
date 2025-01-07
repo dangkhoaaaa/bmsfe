@@ -72,7 +72,8 @@ const Sidebar = () => {
       { text: "Package", icon: <Inventory2OutlinedIcon />, path: "/admin/Package" },
       { text: "Product Application", icon: <RestaurantMenuIcon />, path: "/productApplication" },
       { text: 'Customer', icon: <PersonIcon />, path: "/admin/customer-details" },
-
+      { text: "University", icon: <PersonIcon />, path: "/university" },
+     
       { text: "Profile", icon: <PortraitIcon />, path: "/admin/profile" },
     ];
   } else if (user && user.role && user.role.includes("Shop")) {
