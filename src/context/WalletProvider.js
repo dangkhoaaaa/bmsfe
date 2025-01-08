@@ -13,9 +13,13 @@ export const useWallet = () => {
 export const WalletProvider = ({ children }) => {
   const [wallet, setWallet] = useState(0);
   const token = localStorage.getItem('token');
+  const shopId = localStorage.getItem('shopId');
 
   // Function fetchWallet (giả sử fetch dữ liệu ví từ API)
   const fetchWallet = async () => {
+    if (!shopId || !token) {
+      return;
+    }
     const result = await ApiGetWalletByUser(token);
     if (result.ok) {
       setWallet(result.body.data);

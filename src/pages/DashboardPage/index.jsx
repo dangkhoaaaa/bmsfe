@@ -17,6 +17,8 @@ const Dashboard = () => {
   const [totalNewUsers, setTotalNewUsers] = useState(0);
   const [lastTotalNewUsers, setLastTotalNewUsers] = useState(0);
   const [userTop5Purchased, setUserTop5Purchased] = useState([]);
+  const [totalPackageRevenue, setTotalPackageRevenue] = useState(0);
+  const [lastTotalPackageRevenue, setLastTotalPackageRevenue] = useState(0);
 
   const currentDate = new Date();
   const thisYear = currentDate.getFullYear(); // Năm hiện tại
@@ -65,11 +67,38 @@ const Dashboard = () => {
     }
   }
 
+  const fetchPackageRevenue = async () => {
+    const resultThisMonth = await fetch(`https://bms-fs-api.azurewebsites.net/api/Package/GetRevenueForBuyPackage?month=${thisMonth}&year=${thisYear}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': '*/*'
+      }
+    });
+    const dataThisMonth = await resultThisMonth.json();
+    if (dataThisMonth.isSuccess) {
+      setTotalPackageRevenue(dataThisMonth.data);
+    }
+    
+    const resultLastMonth = await fetch(`https://bms-fs-api.azurewebsites.net/api/Package/GetRevenueForBuyPackage?month=${lastMonth}&year=${lastMonthYear}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': '*/*'
+      }
+    });
+    const dataLastMonth = await resultLastMonth.json();
+    if (dataLastMonth.isSuccess) {
+      setLastTotalPackageRevenue(dataLastMonth.data);
+    }
+  }
+
   useEffect(()=>{
     fetchTotalOrders();
     fetchTotalRevenues();
     fetchTotalNewUsers();
     fetchTop5UserPurchase();
+    fetchPackageRevenue();
   },[]);
 
   return (
@@ -84,8 +113,11 @@ const Dashboard = () => {
               <StatsCard title="New Users" thisMonth={totalNewUsers} lastMonth={lastTotalNewUsers} />
             </div>
             <div className='col-12'>
-              <StatsCard title="Revenue" thisMonth={totalRevenues} lastMonth={lastTotalRevenues} isMoney={true} />
+              <StatsCard title="Revenue Order" thisMonth={totalRevenues} lastMonth={lastTotalRevenues} isMoney={true} />
             </div>
+            <div className='col-12'>
+  <StatsCard title="Revenue Package" thisMonth={totalPackageRevenue} lastMonth={lastTotalPackageRevenue} isMoney={true} />
+</div>
           </div>
           {/* Top Users Card */}
           <div className="col-6">

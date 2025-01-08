@@ -7,6 +7,7 @@ import { GetImagePackage } from '../../utils/StringUtils';
 import Button from '@mui/material/Button';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { Snackbar, Alert } from '@mui/material';
+import { Typography } from '@mui/material';
 
 const PackagePage = () => {
   const [packages, setPackages] = useState([]);
@@ -69,8 +70,32 @@ const PackagePage = () => {
     setDialogOpen(false);
     fetchPackages(); // Refresh danh sách packages
   };
+
+  const currentDate = new Date(); // Get the current date
+  const currentMonth = currentDate.getMonth() + 1; // Current month (0-11 to 1-12)
+  const currentYear = currentDate.getFullYear(); // Current year
+  //const currentMonth = 12; // Current month (0-11 to 1-12)
+ // const currentYear = 2024; // Current year
+  const [packageRevenueData, setPackageRevenueData] = useState([]); // State to hold package revenue data
+
+  // New function to fetch amount and revenue of each package
+  const fetchPackageAmountAndRevenue = async () => {
+    const result = await fetch(`https://bms-fs-api.azurewebsites.net/api/Package/GetAmountAndRevenueOfEachPackage?month=${currentMonth}&year=${currentYear}&pageSize=10`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Add token to headers
+        'Accept': '*/*'
+      }
+    });
+    const data = await result.json();
+    if (data.isSuccess) {
+      setPackageRevenueData(data.data.data); // Set the package revenue data
+    }
+  }
+
   useEffect(() => {
     fetchPackages();
+    fetchPackageAmountAndRevenue(); // Added this line
   }, [currentPage, searchTerm]);
 
   const fetchPackages = async () => {
@@ -145,50 +170,65 @@ const PackagePage = () => {
               <th>Name</th>
               <th>Duration</th>
               <th>Price</th>
-              <th>Status</th>
+             
               <th>Description</th>
+              <th>Amount Sold</th>
+              <th>Total Revenue</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             {packages.length > 0 ? (
-              packages.map((row) => (
-                <tr key={row.id}>
-                  <td>
-                    <div className='d-flex justify-content-center'>
-                      <Avatar
-                        src={`/${GetImagePackage(row.name)}`}
-                        alt={`${row.name} package`}
-                        variant="rounded" // Optional: 'circle' or 'square' are other options
-                        sx={{ width: 100, height: 100 }} // Adjust size as needed
-                      />
-                    </div>
-                  </td>
-                  <td>{row.name}</td>
-                  <td>{row.duration}</td>
-                  <td>
-                    {new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
-                    }).format(row.price)}
-                  </td>
-                  <td>
-                    <Button variant="contained" color="primary" onClick={() => handleOpenDialogUpdate(row.id)} sx={{
-                      borderRadius: '15px',
-                      fontSize: '16px',
-                      background: 'linear-gradient(135deg, #b4ec51, #429321, #0f9b0f)',
-                      boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
-                    }}>Update Now</Button>
-                    <Button variant="contained" color="primary" onClick={() => handleDeletePackage(row.id)} sx={{
-                      borderRadius: '15px',
-                      fontSize: '16px',
-                      background: 'linear-gradient(135deg, #ff9a9e, #ff6a88, #ff3d71)',
-                      boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
-                      marginInlineStart: 2
-                    }}>Delete</Button>
-                  </td>
-                  <td>{row.description}</td>
-                </tr>
-              ))
+              packages.map((row) => {
+                const revenueData = packageRevenueData.find(pkg => pkg.packageId === row.id) || { amountSold: 0, totalRevenue: 0 };
+
+                return (
+                  <tr key={row.id}>
+                    <td>
+                      <div className='d-flex justify-content-center'>
+                        <Avatar
+                          src={`/${GetImagePackage(row.name)}`}
+                          alt={`${row.name} package`}
+                          variant="rounded" // Optional: 'circle' or 'square' are other options
+                          sx={{ width: 100, height: 100 }} // Adjust size as needed
+                        />
+                      </div>
+                    </td>
+                    <td>{row.name}</td>
+                    <td>{row.duration}</td>
+                    <td>
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(row.price)}
+                    </td>
+                   
+                    <td>{row.description}</td>
+                    <td>{revenueData.amountSold}</td>
+                    <td>
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(revenueData.totalRevenue)}
+                    </td>
+                    <td>
+                      <Button variant="contained" color="primary" onClick={() => handleOpenDialogUpdate(row.id)} sx={{
+                        borderRadius: '15px',
+                        fontSize: '16px',
+                        background: 'linear-gradient(135deg, #b4ec51, #429321, #0f9b0f)',
+                        boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
+                      }}>Update Now</Button>
+                      <Button variant="contained" color="primary" onClick={() => handleDeletePackage(row.id)} sx={{
+                        borderRadius: '15px',
+                        fontSize: '16px',
+                        background: 'linear-gradient(135deg, #ff9a9e, #ff6a88, #ff3d71)',
+                        boxShadow: '0px 6px 12px rgba(0,0,0,0.1)',
+                        marginInlineStart: 2
+                      }}>Delete</Button>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="8">No packages found.</td>
@@ -267,6 +307,7 @@ const PackagePage = () => {
           {messageAlert}
         </Alert>
       </Snackbar>
+    
     </div>
   );
 };

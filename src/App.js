@@ -52,9 +52,11 @@ import StaffStudentConfirm from "./pages/StaffStudentConfirm/index.jsx";
 import ShopWallet from "./pages/ShopWallet/index.jsx";
 import ShopReport from "./pages/ShopReport/index.jsx";
 import { WalletProvider } from "./context/WalletProvider.js";
+
 import UniversityList from './pages/University/UniversityList';
 import AddUniversity from './pages/University/AddUniversity';
 import EditUniversity from './pages/University/EditUniversity';
+
 
 function App() {
   return (
@@ -354,6 +356,7 @@ function App() {
                   />
                 }
               />
+
               <Route
                 path="/profile"
                 element={
@@ -373,7 +376,7 @@ function App() {
                 }
               />
             </Route>
-         
+
 
               </Routes>
         </Router>

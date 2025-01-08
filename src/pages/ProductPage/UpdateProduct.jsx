@@ -146,10 +146,7 @@ const UpdateProduct = ({ product, onClose, onSave }) => {
 
         if (!updatedProduct.description.trim()) {
             newErrors.description = "Description is required.";
-        } else if (updatedProduct.description.length < 10) {
-            newErrors.description = "Description must be at least 10 characters.";
         }
-
         if (!updatedProduct.price) {
             newErrors.price = "Price is required.";
         } else if (Number(updatedProduct.price) <= 0) {

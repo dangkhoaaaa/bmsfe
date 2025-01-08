@@ -134,10 +134,12 @@ export default function Header() {
                 </span>
             </div>
             <div className='d-flex align-items-center'>
-                <span className='text-light mx-3 text-underline-hv' onClick={handleClickWallet}>{new Intl.NumberFormat('vi-VN', {
+                {shopId && (
+                    <span className='text-light mx-3 text-underline-hv' onClick={handleClickWallet}>{new Intl.NumberFormat('vi-VN', {
                       style: 'currency',
                       currency: 'VND',
                     }).format(wallet && wallet.balance)}</span>
+                )}
                 <IconButton onClick={handleNotificationClick} style={{ color: 'white' }}>
                     <Badge badgeContent={unreadCount} color='error' overlap='circular'>
                         <NotificationsIcon />
