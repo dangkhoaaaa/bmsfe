@@ -128,7 +128,7 @@ const AddProductPage = () => {
             <Card>
                 <CardContent>
                     <Typography variant="h4" gutterBottom>
-                        New Product Entry
+                        Create Product
                     </Typography>
                     {successMessage && (
                         <Typography color="success.main" gutterBottom>

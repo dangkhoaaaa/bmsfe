@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from '@mui/material';
 
 const ShopOverview = () => {
   const [shops, setShops] = useState([]);
@@ -18,7 +19,7 @@ const ShopOverview = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://bms-fs-api.azurewebsites.net/api/ShopApplication?pageIndex=${currentPage}&pageSize=${shopsPerPage}&search=${encodeURIComponent(
+          `https://bms-fs-api.azurewebsites.net/api/ShopApplication?isDesc=true&pageIndex=${currentPage}&pageSize=${shopsPerPage}&search=${encodeURIComponent(
             debouncedSearchTerm
           )}`
         );
@@ -96,6 +97,7 @@ const ShopOverview = () => {
               <th>Description</th>
               <th>Rate</th>
               <th>Actions</th>
+              <th>Edit Time</th>
             </tr>
           </thead>
           <tbody>
@@ -122,6 +124,11 @@ const ShopOverview = () => {
                   >
                     View Details
                   </button>
+                </td>
+                <td>
+                  <Link to={`/admin/edit-shop-operating-hours/${shop.id}`}>
+                    <Button variant="contained" color="primary">Edit Time</Button>
+                  </Link>
                 </td>
               </tr>
             ))}

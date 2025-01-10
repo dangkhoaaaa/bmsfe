@@ -14,6 +14,7 @@ import ShopDetail from "./pages/ShopDetail/ShopDetail.js";
 import UserDetail from "./pages/UserInformation/UserDetail.js";
 import UserList from "./pages/UserInformation/UserList.js";
 import DashboardStaff from "./pages/DashboardStaff/DashboardStaff.js";
+import EditShopOperatingHours from './pages/ShopOperatingHours/EditShopOperatingHours';
 
 import DashboardPage from "./pages/DashboardPage/index.jsx";
 import OrdersPage from "./pages/OrderPage/index.jsx";
@@ -102,6 +103,10 @@ function App() {
                 path="/admin/feedback"
                 element={<ProtectedRoute element={<FeedbackPage />} requiredRole={"Admin"} />}
               />
+              <Route
+                path="/admin/edit-shop-operating-hours/:shopId"
+                element={<ProtectedRoute element={<EditShopOperatingHours />} requiredRole={"Admin"} />}
+              />
             </Route>
 
             {/* Shop Routes */}
@@ -188,6 +193,7 @@ function App() {
                   />
                 } // Add route for AddProduct
               />
+            
             </Route>
 
             {/* Staff Routes */}

@@ -118,6 +118,7 @@ export const API_GET_ALL_UNIVERSITY = HTTP_SERVER + "/api/University";
 */
 export const API_GET_OPERATION_HOURS_FOR_SHOP = HTTP_SERVER + "/api/OpeningHour/GetOpeningHoursForShop";
 export const API_UPDATE_OPERATION_HOURS_FOR_SHOP = HTTP_SERVER + "/api/OpeningHour/UpdateOpeningHoursForShop";
+export const API_UPDATE_OPERATION_HOURS_FOR_SHOP_BY_ADMIN = HTTP_SERVER + "/api/OpeningHour/UpdateOpeningHoursForShopByAdmin";
 
 /*
  ** API AUTH

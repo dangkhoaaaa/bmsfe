@@ -40,8 +40,12 @@ const ShopPackagePage = () => {
 
         // Gắn `isBought` vào package
         const updatedPackages = packageList.map((pkg) => {
-          const isBought = boughtPackages.some((boughtPkg) => boughtPkg.id === pkg.id);
-          return { ...pkg, isBought }; // Thêm thuộc tính `isBought`
+          const boughtPkg = boughtPackages.find((bought) => bought.id === pkg.id); // Find the corresponding bought package
+          return {
+            ...pkg, // Spread the original package properties
+            isBought: !!boughtPkg, // Set isBought based on whether the package was found
+            expiredDate: boughtPkg ? boughtPkg.expiredDate : pkg.expiredDate // Use the bought package's expiredDate if it exists
+          };
         });
 
         setPackages(updatedPackages);
@@ -102,6 +106,7 @@ const ShopPackagePage = () => {
               <th>Price</th>
               <th>Status</th>
               <th>Description</th>
+              <th>Expiration Date</th>
             </tr>
           </thead>
           <tbody>
@@ -139,6 +144,35 @@ const ShopPackagePage = () => {
                       )}
                   </td>
                   <td>{row.description}</td>
+                  <td>
+  {row.expiredDate ? (
+    <>
+      {new Date(row.expiredDate).toLocaleString('en-EN', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      })}
+      {/* Calculate remaining time */}
+      {(() => {
+        const now = new Date();
+        const expirationDate = new Date(row.expiredDate);
+        const timeDiff = expirationDate - now;
+
+        if (timeDiff > 0) {
+          const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+          return <span style={{ color: 'red' }}> ({daysLeft} day left)</span>;
+        } else {
+          return ' (Expired)';
+        }
+      })()}
+    </>
+  ) : (
+    'No expiration date'
+  )}
+</td>
                 </tr>
               ))
             ) : (

@@ -21,3 +21,15 @@ export const ApiUpdateOperationHours = async (shopId, listOpeningHours, token) =
     return Constant.ResponseData(response);
 }
 
+export const ApiUpdateOperationHoursByAdmin = async (shopId, listOpeningHours, token) => {
+    const jsonRequest = {
+        shopId,
+        listOpeningHours,
+    }
+    const response = await fetch(`${Constant.API_UPDATE_OPERATION_HOURS_FOR_SHOP_BY_ADMIN}`, {
+        method: "PUT",
+        headers: Constant.HTTP_HEADER_TOKEN(token),
+        body: JSON.stringify(jsonRequest)
+    });
+    return Constant.ResponseData(response);
+}
