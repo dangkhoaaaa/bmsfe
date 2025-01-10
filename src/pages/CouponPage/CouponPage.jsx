@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import AuthContext from '../../auth/AuthContext';
 import UpdateCoupon from './UpdateCoupon';
+import { Box, Typography } from '@mui/material';
 
 const CouponPage = () => {
   const { user: { token } } = useContext(AuthContext);
@@ -92,7 +93,9 @@ const CouponPage = () => {
 
   return (
     <div className="coupon-container">
-      <h1>Shop Coupons</h1>
+      <Box sx={{ my: '20px' }}>
+        <Typography align='left' variant='h4'>Shop Coupons</Typography>
+      </Box>
 
       <div className="coupon-box">
         <div className="search-and-add">

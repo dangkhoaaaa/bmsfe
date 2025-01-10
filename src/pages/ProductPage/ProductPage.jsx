@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import './ProductPage.scss';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Button, Switch, FormControlLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert, Box, TextField, Checkbox } from '@mui/material';
+import { Grid, Button, Switch, FormControlLabel, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert, Box, TextField, Checkbox, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { ApiDeleteProduct, ApiGetProductsByShopId } from '../../services/ProductServices';
 import { io } from 'socket.io-client';
@@ -172,7 +172,9 @@ const ProductPage = () => {
 
     return (
         <div className="product-page">
-            <h1>Product List</h1>
+            <Box sx={{ my: '20px' }}>
+                <Typography align='left' variant='h4'>Product List</Typography>
+            </Box>
             <div className="product-controls">
                 <div className="flex-grow-1">
                     <input

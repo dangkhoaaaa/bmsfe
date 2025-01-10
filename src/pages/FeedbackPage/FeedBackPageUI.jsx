@@ -18,8 +18,8 @@ const FeedbackPageUI = ({
   return (
     <Container>
       {/* Average Rating Section */}
-   
-      { averageRating ? ( // Added condition to check for averageRating
+
+      {averageRating ? ( // Added condition to check for averageRating
         <Box sx={{ textAlign: 'center', mb: 2 }}>
           <Typography variant="h5" fontWeight="bold">
             Average Rating: {averageRating} / 5
@@ -27,7 +27,7 @@ const FeedbackPageUI = ({
           <Rating value={parseFloat(averageRating)} readOnly precision={0.5} />
         </Box>
       ) : (
-       null   )}
+        null)}
 
       {/* Filter Bar */}
       <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 3, mb: 3 }}>
@@ -55,9 +55,9 @@ const FeedbackPageUI = ({
 
       {/* Feedback Section */}
       <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 3 }}>
-        <Typography variant="h4" fontWeight="bold" gutterBottom>
-          Customer Feedback
-        </Typography>
+        <Box sx={{ my: '20px' }}>
+          <Typography align='left' variant='h4'>Customer Feedback</Typography>
+        </Box>
 
         {loading ? (
           <Box display="flex" justifyContent="center" alignItems="center">

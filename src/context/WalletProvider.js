@@ -16,15 +16,18 @@ export const WalletProvider = ({ children }) => {
   const shopId = localStorage.getItem('shopId');
 
   // Function fetchWallet (giả sử fetch dữ liệu ví từ API)
-  const fetchWallet = async () => {
-    if (!shopId || !token) {
-      return;
+  const fetchWallet = async (userToken = null) => {
+    if (!userToken) {
+      if (!shopId || !token) {
+        return;
+      }
     }
-    const result = await ApiGetWalletByUser(token);
+    const result = await ApiGetWalletByUser(userToken && userToken || token);
     if (result.ok) {
       setWallet(result.body.data);
     } else {
-      alert(result.message);
+      setWallet(0);
+      // alert(result.message);
     }
   };
 

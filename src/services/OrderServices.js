@@ -41,10 +41,13 @@ export const ApiUpdateOrderStatus = async (status, orderId, token) => {
     return Constant.ResponseData(response);
 }
 
-export const ApiChangeOrderStatus = async (status, orderId, token) => {
+export const ApiChangeOrderStatus = async (status, orderId, token, reasonOfCancel = null) => {
     const formData = new FormData();
     formData.append("id", orderId);
     formData.append("status", status);
+    if (reasonOfCancel && reasonOfCancel.trim() != '') {
+        formData.append("reasonOfCancel", reasonOfCancel);
+    }
     const response = await fetch(`${Constant.API_CHANGE_ORDER_STATUS}`, {
         method: "POST",
         headers: Constant.HEADER_TOKEN(token),

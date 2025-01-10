@@ -13,7 +13,8 @@ import { ApiLoginByAccount } from '../../services/AuthServices';
 import { ApiGetProfile } from '../../services/AccountServices';
 import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS for toast notifications
-import {Snackbar, Alert} from '@mui/material';
+import { Snackbar, Alert } from '@mui/material';
+import { useWallet } from '../../context/WalletProvider';
 const theme = createTheme({
   palette: {
     primary: {
@@ -26,7 +27,8 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const { setUser } = useContext(AuthContext)
+  const { setUser } = useContext(AuthContext);
+  const { wallet, fetchWallet } = useWallet();
   const [data, setData] = useState({
     email: '',
     password: '',
@@ -66,6 +68,7 @@ export default function Login() {
       navigate('/shop-application');
     } else if (decoded.role.toLowerCase() == "shop" || decoded.role.includes('Shop')) {
       setShopLocalInfo(token);
+      fetchWallet(token);
     } else {
       toast.error('Unauthorized role');
     }

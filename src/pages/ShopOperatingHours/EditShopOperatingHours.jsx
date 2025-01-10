@@ -139,9 +139,9 @@ export default function EditShopOperatingHours() {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Adjust Shop Operating Hours
-      </Typography>
+      <Box sx={{ my: '20px' }}>
+        <Typography align='left' variant='h4'>Adjust Shop Operating Hours</Typography>
+      </Box>
       <Grid container spacing={3}>
         {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map((day) => (
           <Grid item xs={12} md={6} key={day}>

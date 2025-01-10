@@ -6,6 +6,8 @@ import {
   CardContent,
   CardMedia,
   Box,
+  FormLabel,
+  RadioGroup,
   Divider,
 } from '@mui/material';
 import {
@@ -14,6 +16,9 @@ import {
   Button,
   FormControl,
   InputLabel,
+  TextField,
+  FormControlLabel,
+  Radio
 } from '@mui/material';
 import { ApiChangeOrderStatus, ApiGetOrderById } from '../../services/OrderServices';
 import { useLocation } from 'react-router-dom';
@@ -27,6 +32,13 @@ import { Snackbar, Alert } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const cancellationReasons = [
+  "Order is late",
+  "Wrong item",
+  "Changed mind",
+  "Other",
+];
+
 const OrderDetailPage = () => {
   const [socket, setSocket] = useState(null);
   const [open, setOpen] = useState(false);
@@ -38,6 +50,8 @@ const OrderDetailPage = () => {
   const [status, setStatus] = useState('ORDERED');
   const token = localStorage.getItem('token');
   const [isCompleteScan, setIsCompleteScan] = useState(true);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
   const handleCloseQR = () => {
     setOpen(false);
     fetchApiGetOrderById();
@@ -45,6 +59,17 @@ const OrderDetailPage = () => {
   const [openAlert, setOpenAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [openDialogReason, setOpenDialogReason] = useState(false);
+  const [reason, setReason] = useState("");
+
+  const handleOpenDialogReason = () => {
+    setOpenDialogReason(true);
+  };
+
+  const handleCloseDialogReason = () => {
+    setOpenDialogReason(false);
+  };
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -111,7 +136,15 @@ const OrderDetailPage = () => {
   };
 
   const fetchUpdateOrderStatus = async () => {
-    const token = localStorage.getItem('token');
+    if (status == "CANCEL") {
+      // show dialog enter reason
+      if (order.status == "CANCEL") {
+        toast.error("The status of this order is already cancelled.");
+        return;
+      }
+      handleOpenDialogReason();
+      return;
+    }
     if (status == "COMPLETE" && !order.isPayed) {
       handleOpenDialog();
       return;
@@ -124,6 +157,28 @@ const OrderDetailPage = () => {
       toast.error(result.message);
     }
   }
+
+  const handleSubmitReason = async () => {
+    const reasonToSubmit = selectedReason === "Other" ? customReason : selectedReason;
+
+    // Kiểm tra nếu lý do hủy chưa được nhập
+    if (!reasonToSubmit.trim()) {
+      toast.error("Please enter a cancellation reason.");
+      return;
+    }
+
+    // Gửi lý do hủy đơn qua API
+    const result = await ApiChangeOrderStatus("CANCEL", orderId, token, reasonToSubmit);
+    if (result.ok) {
+      toast.success("Order canceled with reason: " + reasonToSubmit);
+      fetchApiGetOrderById();
+      setCustomReason('');
+      setSelectedReason('');
+      setOpenDialogReason(false);
+    } else {
+      toast.error(result.message);
+    }
+  };
 
   const sendNotiToUser = async (orderId, userId, shopId) => {
     if (socket) {
@@ -394,6 +449,54 @@ const OrderDetailPage = () => {
         onClose={handleCloseDialog}
         onConfirm={handleConfirmPayment}
       />
+      {/* Dialog để nhập lý do khi hủy đơn */}
+      <Dialog open={openDialogReason} onClose={handleCloseDialogReason}>
+        <DialogTitle>Enter Reason for Cancellation</DialogTitle>
+        <DialogContent>
+          <FormControl component="fieldset" fullWidth>
+            <FormLabel component="legend">Select a Reason</FormLabel>
+            <RadioGroup
+              value={selectedReason}
+              onChange={(e) => setSelectedReason(e.target.value)}
+            >
+              {cancellationReasons.map((reason, index) => (
+                <FormControlLabel
+                  key={index}
+                  value={reason}
+                  control={<Radio />}
+                  label={reason}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+
+          {selectedReason === "Other" && (
+            <TextField
+              label="Other reason"
+              fullWidth
+              multiline
+              rows={4}
+              value={customReason}
+              onChange={(e) => setCustomReason(e.target.value)}
+              variant="outlined"
+              margin="normal"
+            />
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialogReason} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmitReason}
+            color="primary"
+            disabled={!selectedReason.trim()}
+          >
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </StyledPaper>
   );
 };

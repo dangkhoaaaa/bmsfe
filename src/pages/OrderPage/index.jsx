@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Typography, Toolbar, TableBody, TextField, Select, MenuItem, FormControl, InputLabel, Pagination } from '@mui/material';
+import { Button, Typography, Toolbar, TableBody, TextField, Select, MenuItem, FormControl, InputLabel, Pagination, Box } from '@mui/material';
 import { StyledPaper, StyledTableContainer, StyledTable, StyledTableHead, StyledTableRow, StyledTableCell,} from './ManageOrders.style';
 import { ApiGetListOrders, ApiGetOrderByShopId } from '../../services/OrderServices';
 import { useNavigate } from 'react-router-dom';
@@ -58,9 +58,9 @@ const ManageOrderPage = () => {
   return (
     <StyledPaper>
       <Toolbar sx={{ justifyContent: 'space-between', marginBottom: 2 }}>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          SHOP ORDERS
-        </Typography>
+        <Box sx={{ my: '20px' }}>
+          <Typography align='left' variant='h4'>Shop Orders</Typography>
+        </Box>
         <div>
           {/* SELECT BOX */}
           <FormControl size="small" sx={{ minWidth: 150 }} className='me-2'>

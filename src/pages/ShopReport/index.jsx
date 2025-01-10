@@ -69,9 +69,9 @@ export default function ShopReport() {
   return (
     <Box sx={{ padding: 3 }}>
       {/* Header */}
-      <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 'bold' }}>
-        Shop Revenue and Performance Report
-      </Typography>
+      <Box sx={{ my: '20px' }}>
+        <Typography align='center' variant='h4'>Shop Revenue and Performance Report</Typography>
+      </Box>
 
       {/* Filters */}
       <Box

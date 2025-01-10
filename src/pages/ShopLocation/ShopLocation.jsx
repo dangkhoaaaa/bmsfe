@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ApiGetShopById } from '../../services/ShopServices'; // Import API
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { Box, Typography } from '@mui/material';
 
 const ShopLocation = () => {
   const [shopDetails, setShopDetails] = useState(null);
@@ -83,7 +84,9 @@ const ShopLocation = () => {
 
   return (
     <div>
-      <h1>{shopDetails.name}</h1>
+      <Box sx={{ my: '20px' }}>
+        <Typography align='left' variant='h4'>{shopDetails.name}</Typography>
+      </Box>
       <div
         ref={mapRef}
         style={{ height: '600px', width: '100%' }}

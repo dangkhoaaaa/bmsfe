@@ -5,6 +5,7 @@ import { ApiGetPackageForShopInUse, ApiGetPackages } from '../../services/Packag
 import Avatar from '@mui/material/Avatar';
 import { GetImagePackage } from '../../utils/StringUtils';
 import Button from '@mui/material/Button';
+import { Box, Typography } from '@mui/material';
 
 const ShopPackagePage = () => {
   const [packages, setPackages] = useState([]);
@@ -84,8 +85,9 @@ const ShopPackagePage = () => {
 
   return (
     <div className="coupon-container">
-      <h1>SHOP PACKAGES</h1>
-
+      <Box sx={{ my: '20px' }}>
+        <Typography align='left' variant='h4'>Shop Packages</Typography>
+      </Box>
       <div className="coupon-box">
         <div className="search-and-add">
           <input
@@ -145,34 +147,34 @@ const ShopPackagePage = () => {
                   </td>
                   <td>{row.description}</td>
                   <td>
-  {row.expiredDate ? (
-    <>
-      {new Date(row.expiredDate).toLocaleString('en-EN', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-      })}
-      {/* Calculate remaining time */}
-      {(() => {
-        const now = new Date();
-        const expirationDate = new Date(row.expiredDate);
-        const timeDiff = expirationDate - now;
+                    {row.expiredDate ? (
+                      <>
+                        {new Date(row.expiredDate).toLocaleString('en-EN', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit'
+                        })}
+                        {/* Calculate remaining time */}
+                        {(() => {
+                          const now = new Date();
+                          const expirationDate = new Date(row.expiredDate);
+                          const timeDiff = expirationDate - now;
 
-        if (timeDiff > 0) {
-          const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
-          return <span style={{ color: 'red' }}> ({daysLeft} day left)</span>;
-        } else {
-          return ' (Expired)';
-        }
-      })()}
-    </>
-  ) : (
-    'No expiration date'
-  )}
-</td>
+                          if (timeDiff > 0) {
+                            const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+                            return <span style={{ color: 'red' }}> ({daysLeft} day left)</span>;
+                          } else {
+                            return ' (Expired)';
+                          }
+                        })()}
+                      </>
+                    ) : (
+                      'No expiration date'
+                    )}
+                  </td>
                 </tr>
               ))
             ) : (

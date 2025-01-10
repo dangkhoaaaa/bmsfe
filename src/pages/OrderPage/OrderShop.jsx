@@ -9,7 +9,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Pagination
+  Pagination,
+  Box
 } from '@mui/material';
 import {
   StyledPaper,
@@ -77,9 +78,9 @@ const OrderShop = () => {
   return (
     <StyledPaper>
       <Toolbar sx={{ justifyContent: 'space-between', marginBottom: 2 }}>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          SHOP ORDERS
-        </Typography>
+        <Box sx={{ my: '20px' }}>
+          <Typography align='left' variant='h4'>Shop Orders</Typography>
+        </Box>
         <div>
           {/* SELECT BOX */}
           <FormControl size="small" sx={{ minWidth: 150 }} className='me-2'>
