@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 export default function ShopPrepList() {
   const shopId = localStorage.getItem('shopId');
   const token = localStorage.getItem('token');
-  const STATUS_ORDERED = 2;
+  const STATUS_ORDERED = 3;
   const [selectedDay, setSelectedDay] = useState('today');
   const [listDataPrep, setListDataPrep] = useState([]);
 
