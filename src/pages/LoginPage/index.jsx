@@ -206,25 +206,77 @@ export default function Login() {
           }}
         >
           <Box>
-            <Avatar
-              src="/LOGO.png"
-              sx={{ width: 300, height: 300, bgcolor: '#088A08', marginBottom: 2 }}
-            />
+          <style>{`
+    @keyframes glossyEffect {
+      0% {
+        background-position: -150% 0;
+      }
+      50% {
+        background-position: 150% 0;
+      }
+      100% {
+        background-position: -150% 0;
+      }
+    }
+
+    .glossy-avatar {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glossy-avatar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.4) 100%);
+      background-size: 200% 200%;
+      animation: glossyEffect 3s infinite;
+      pointer-events: none;
+    }
+  `}</style>
+
+  <Avatar
+    className="glossy-avatar"
+    src="/LOGO.png"
+    sx={{ width: 300, height: 300, bgcolor: '#088A08', marginBottom: 2 }}
+  />
           </Box>
 
           <Box component="form" onSubmit={handleSubmitLogin} sx={{ mt: 1, width: '100%', maxWidth: '400px' }}>
-            <Typography component="h1" variant="h5" sx={{ textAlign: 'center', marginBottom: 2, fontWeight: 'bold', color: '#088A08' }}>
-
-              WELCOME TO BMS !
-
-            </Typography>
+          <Typography
+    component="h1"
+    variant="h5"
+    sx={{
+      textAlign: 'center',
+      marginBottom: 2,
+      fontWeight: 'bold',
+      color: '#088A08',
+      animation: 'gradientAnimation 3s ease infinite', // Thêm hiệu ứng animation
+    }}
+  >
+    WELCOME TO BMS !
+  </Typography>
 
             {error && (
               <Typography color="error" variant="body2" align="center" sx={{ marginBottom: 2 }}>
                 {error}
               </Typography>
             )}
-
+<style>
+  {`
+    @keyframes colorChange {
+      0% {
+        color: #088A08; // Màu ban đầu
+      }
+      100% {
+        color: #1abc9c; // Màu cuối
+      }
+    }
+  `}
+</style>
             <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 3 }}>
               <EmailIcon sx={{ mr: 1, color: '#088A08' }} />
               <TextField

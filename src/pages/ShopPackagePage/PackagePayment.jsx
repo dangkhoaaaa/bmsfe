@@ -5,8 +5,11 @@ import { useLocation } from 'react-router-dom';
 import { ApiBuyPackage, ApiCreatePaymentVNPayURL, ApiGetPackageById } from '../../services/PackageServices';
 import { useNavigate } from 'react-router-dom';
 import { Snackbar, Alert } from '@mui/material';
+import { ApiUpdateBalance } from '../../services/WalletServices';
+import { useWallet } from '../../context/WalletProvider';
 
 const PackagePayment = () => {
+  const {wallet, fetchWallet} = useWallet();
   const location = useLocation();
   const [selectedPayment, setSelectedPayment] = useState('VNPay');
   const [price, setPrice] = useState(0); // Đơn giá VND
@@ -14,6 +17,9 @@ const PackagePayment = () => {
   const navigate = useNavigate();
   const [openAlert, setOpenAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
+  const STATUS_PAID_PACKAGE = 7;
+  const shopId = localStorage.getItem('shopId');
+  const token = localStorage.getItem('token');
   const handleCloseAlert = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -40,8 +46,6 @@ const PackagePayment = () => {
 
   const handleSubmitPayment = async () => {
     if (selectedPayment === "VNPay") {
-      const shopId = localStorage.getItem('shopId');
-      const token = localStorage.getItem('token');
       const packagePrice = price < 1000 && price * 100000 || price;
       const result = await ApiCreatePaymentVNPayURL(shopId, packageId, "Customer 1", packageName, Math.round(packagePrice), token);
       if (result.ok) {
@@ -52,17 +56,20 @@ const PackagePayment = () => {
     } else if (selectedPayment === "Momo") {
       alert("This feature will be developed in the future.");
     } else {
-      const token = localStorage.getItem('token');
-      const shopId = localStorage.getItem('shopId');
-      const result = await ApiBuyPackage(shopId, packageId, token);
-      if (result.ok) {
-        setMessageAlert("Your package purchase was successful.");
-        setOpenAlert(true);
-        setTimeout(() => {
-          navigate(`/shop/package`);
-        }, 2000);
-      } else {
-        alert(result.message);
+      const packagePrice = price < 1000 && price * 100000 || price;
+      const resultUpdateBalance = await ApiUpdateBalance(Math.round(packagePrice), STATUS_PAID_PACKAGE, token);
+      if (resultUpdateBalance.ok) {
+        const result = await ApiBuyPackage(shopId, packageId, token);
+        if (result.ok) {
+          fetchWallet();
+          setMessageAlert("Your package purchase was successful.");
+          setOpenAlert(true);
+          setTimeout(() => {
+            navigate(`/shop/package`);
+          }, 2000);
+        } else {
+          alert(result.message);
+        }
       }
     }
   };
@@ -109,7 +116,7 @@ const PackagePayment = () => {
                   label={
                     <div className="list-group-item payment-option" style={{ height: 80, width: 450 }}>
                       <img src="/PAYMENT_CASH.png" alt="Cash" className="thumbnail" />
-                      <span className="payment-label">Cash</span>
+                      <span className="payment-label">BMS Wallet - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(wallet.balance)}</span>
                     </div>
                   }
                 />

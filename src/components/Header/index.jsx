@@ -29,7 +29,7 @@ export default function Header() {
     };
 
     useEffect(() => {
-        fetchWallet();
+        fetchWallet(token);
         fetchCountNotiByRole();
         socket.on('connect', () => {
             console.log('Connected to server with socket ID:', socket.id);
