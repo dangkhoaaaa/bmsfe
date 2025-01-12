@@ -26,9 +26,10 @@ export default function ShopPrepList() {
       const listOperationHours = result.body.data.data;
       const tomorrow = new Date();
       if (isTomorrow) {
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        console.log("hi"+tomorrow);
+        tomorrow.setDate(tomorrow.getDate() + 2);
       } else {
-        tomorrow.setDate(tomorrow.getDate());
+        tomorrow.setDate(tomorrow.getDate()+1);
       }
 
       listOperationHours.forEach((row) => {
