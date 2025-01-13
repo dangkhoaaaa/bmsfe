@@ -18,7 +18,10 @@ export default function Header() {
     const [notis, setNotis] = useState([]);
     const token = localStorage.getItem('token');
     const shopId = localStorage.getItem('shopId');
-    const decoded = jwtDecode(token);
+    var decoded = null;
+    if (token) {
+        decoded = jwtDecode(token);
+    }
     const navigate = useNavigate();
     const socket = io(HTTP_SOCKET_SERVER);
     const { wallet, fetchWallet } = useWallet();
@@ -40,7 +43,7 @@ export default function Header() {
         });
 
         // Connect to the shop's room using shopId
-        if (decoded.role.includes('Shop')) {
+        if (decoded && decoded.role.includes('Shop')) {
             const shopId = localStorage.getItem('shopId');
             console.log('Emitting join-shop-topic for shopId:', shopId);
             socket.emit('join-shop-topic', shopId);
@@ -58,14 +61,14 @@ export default function Header() {
     }, []);
 
     const fetchNotiByRole = async () => {
-        if (decoded.role.includes('Shop')) {
+        if (decoded && decoded.role.includes('Shop')) {
             await fetchNotiForShop();
             await fetchReadAllNotiForShop();
         }
     };
 
     const fetchCountNotiByRole = async () => {
-        if (decoded.role.includes('Shop')) {
+        if (decoded && decoded.role.includes('Shop')) {
             await fetchCountNotiForShop();
         }
     };

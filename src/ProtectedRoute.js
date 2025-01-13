@@ -12,6 +12,7 @@ const ProtectedRoute = ({ element, requiredRole }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    console.log(token);
     if (token) {
       const decoded = jwtDecode(token);
       if (!user) {
@@ -31,7 +32,7 @@ const ProtectedRoute = ({ element, requiredRole }) => {
       }
       setComp(element);
     } else {
-      window.location = '/login'
+      navigate('/login');
     }
   });
 
