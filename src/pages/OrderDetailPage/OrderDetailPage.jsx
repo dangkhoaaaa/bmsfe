@@ -23,7 +23,7 @@ import {
 import { ApiChangeOrderStatus, ApiGetOrderById } from '../../services/OrderServices';
 import { useLocation } from 'react-router-dom';
 import { StyledPaper } from '../OrderPage/ManageOrders.style';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Modal, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { QRCodeCanvas } from 'qrcode.react';
 import { io } from 'socket.io-client';
@@ -33,9 +33,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const cancellationReasons = [
-  "Order is late",
-  "Wrong item",
-  "Changed mind",
+  "Customer request",
+  "Item no longer available",
+  "Kitchen malfunction",
   "Other",
 ];
 
@@ -46,12 +46,15 @@ const OrderDetailPage = () => {
   const [order, setOrder] = useState(null);
   const searchParams = new URLSearchParams(location.search);
   const orderId = searchParams.get('orderId');
+  const refreshString = searchParams.get('refreshString');
   const shopId = localStorage.getItem('shopId');
   const [status, setStatus] = useState('ORDERED');
   const token = localStorage.getItem('token');
   const [isCompleteScan, setIsCompleteScan] = useState(true);
   const [selectedReason, setSelectedReason] = useState("");
   const [customReason, setCustomReason] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const handleCloseQR = () => {
     setOpen(false);
     fetchApiGetOrderById();
@@ -208,6 +211,10 @@ const OrderDetailPage = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
     fetchApiGetOrderById();
     const socketConnection = io(HTTP_SOCKET_SERVER);
     setSocket(socketConnection);
@@ -216,7 +223,7 @@ const OrderDetailPage = () => {
         socketConnection.disconnect(); // Delay disconnect by 2 seconds
       }, 2000); // 2 seconds delay
     };
-  }, [orderId]);
+  }, [orderId, refreshString]);
 
   if (!order) return <Typography>Loading...</Typography>;
 
@@ -494,6 +501,18 @@ const OrderDetailPage = () => {
           >
             Submit
           </Button>
+        </DialogActions>
+      </Dialog>
+       {/* Dialog hiển thị khi loading */}
+       <Dialog open={loading} disableEscapeKeyDown>
+        <DialogTitle>Loading...</DialogTitle>
+        <DialogContent>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <CircularProgress />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          {/* Có thể thêm nút hủy nếu muốn */}
         </DialogActions>
       </Dialog>
 

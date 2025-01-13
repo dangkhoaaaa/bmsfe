@@ -104,11 +104,21 @@ export default function Header() {
     };
 
     const handleItemClick = (id) => {
-        navigate(`/shop/orders/detail?orderId=${id}`);
+        navigate(`/shop/orders/detail?orderId=${id}&&refreshString=${generateRandomString(10)}`);
     };
 
     const handleClickWallet = () => {
         navigate(`/shop/wallet`);
+    }
+
+    function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        const charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
     }
 
     return (
@@ -136,8 +146,8 @@ export default function Header() {
             <div className='d-flex align-items-center'>
                 {shopId && (
                     <span className='text-light mx-3 text-underline-hv' onClick={handleClickWallet}>{new Intl.NumberFormat('vi-VN', {
-                      style: 'currency',
-                      currency: 'VND',
+                        style: 'currency',
+                        currency: 'VND',
                     }).format(wallet && wallet.balance)}</span>
                 )}
                 <IconButton onClick={handleNotificationClick} style={{ color: 'white' }}>

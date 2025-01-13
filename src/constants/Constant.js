@@ -33,7 +33,7 @@ export const HEADER_TOKEN = (token) => {
 /*
  ** GOOGLE API KEY
  */
-export const API_KEY = "AlzaSydapZiNthTw3F10s6HOw1m0g4IK5hF687x";
+export const API_KEY = "AlzaSy_7wn6utn1bBFVWPdQ2jA037hNqkNaxG3Y";
 export const URL_MAP_AUTOCOMPLETE = "https://maps.gomaps.pro/maps/api/place/autocomplete/json";
 
 /*
